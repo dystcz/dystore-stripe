@@ -43,7 +43,7 @@ return [
 App::make(StripePaymentAdapter::class)->createIntent($cart)
 
 // Handle a webhook (validate and authorize payment)
-App::make(StripePaymentAdapter::class)->handleWebhook($cart)
+App::make(StripePaymentAdapter::class)->handleWebhook($request)
 ```
 
 ## Testing
