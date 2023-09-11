@@ -33,7 +33,7 @@ This is the contents of the published config file:
 
 ```php
 return [
-    'driver' => 'paypal',
+    'driver' => 'stripe',
     'type' => 'card',
 ];
 ```
