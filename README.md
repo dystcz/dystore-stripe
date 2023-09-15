@@ -1,4 +1,4 @@
-# This is my package lunar-api-stripe-adapter
+# Lunar API Stripe Adapter
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/dystcz/lunar-api-stripe-adapter.svg?style=flat-square)](https://packagist.org/packages/dystcz/lunar-api-stripe-adapter)
 ![GitHub Actions](https://github.com/dystcz/lunar-api-stripe-adapter/actions/workflows/tests.yaml/badge.svg)
