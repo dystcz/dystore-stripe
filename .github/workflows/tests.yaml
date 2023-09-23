@@ -12,11 +12,20 @@ jobs:
       matrix:
         php: [ 8.2 ]
         laravel: [ 10 ]
+        
+    environment: testing
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: Setup Laravel environment
+        run: |
+          cp .env.testing.example .env.testing
+          sed -i 's/STRIPE_PUBLIC_KEY=pk_test_/STRIPE_PUBLIC_KEY=${{ secrets.STRIPE_PUBLIC_KEY }}/g' .env.testing
+          sed -i 's/STRIPE_SECRET_KEY=sk_test_/STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}/g' .env.testing
+          sed -i 's/STRIPE_WEBHOOK_SECRET=whsec_/STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET }}/g' .env.testing
+     
       - name: Setup PHP, with composer and extensions
         uses: shivammathur/setup-php@v2
         with:
