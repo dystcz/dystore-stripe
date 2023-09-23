@@ -19,7 +19,7 @@ beforeEach(function () {
         ->withLines()
         ->create();
 
-    $cart->createOrder();
+    $order = $cart->createOrder();
 
     $intentId = App::make(StripePaymentAdapter::class)->createIntent($cart)->id;
 
@@ -31,14 +31,14 @@ beforeEach(function () {
         ],
     ]);
 
-    $cart->order->update([
+    $order->update([
         'meta' => [
             'payment_intent' => $this->intent->id,
         ],
     ]);
 
     $this->cart = $cart;
-    $this->order = $cart->order;
+    $this->order = $order;
 });
 
 it('can handle succeeded event', function () {
@@ -46,7 +46,7 @@ it('can handle succeeded event', function () {
 
     $data = json_decode(file_get_contents(__DIR__.'/Stubs/Stripe/payment_intent.succeeded.json'), true);
 
-    $data['data']['object']['id'] = $this->cart->meta->payment_intent;
+    $data['data']['object']['id'] = $this->cart->meta['payment_intent'];
 
     PaymentIntent::update($this->intent->id, [
         'payment_method_types' => ['card'],
@@ -55,7 +55,7 @@ it('can handle succeeded event', function () {
 
     $this->intent->confirm();
 
-    $this->post('/stripe/webhook', $data)->ray()->assertSuccessful();
+    $this->post('/stripe/webhook', $data)->assertSuccessful();
 
     Event::assertDispatched(OrderPaid::class);
 });
@@ -65,7 +65,7 @@ it('can handle canceled event', function () {
 
     $data = json_decode(file_get_contents(__DIR__.'/Stubs/Stripe/payment_intent.canceled.json'), true);
 
-    $data['data']['object']['id'] = $this->cart->meta->payment_intent;
+    $data['data']['object']['id'] = $this->cart->meta['payment_intent'];
 
     $this->post('/stripe/webhook', $data)->assertSuccessful();
 
@@ -77,7 +77,7 @@ it('can handle payment_failed event', function () {
 
     $data = json_decode(file_get_contents(__DIR__.'/Stubs/Stripe/payment_intent.payment_failed.json'), true);
 
-    $data['data']['object']['id'] = $this->cart->meta->payment_intent;
+    $data['data']['object']['id'] = $this->cart->meta['payment_intent'];
 
     $this->post('/stripe/webhook', $data)->assertSuccessful();
 

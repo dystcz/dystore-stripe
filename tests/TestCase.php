@@ -11,6 +11,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
+use LaravelJsonApi\Testing\MakesJsonApiRequests;
 use Lunar\Base\ShippingModifiers;
 use Lunar\Facades\Taxes;
 use Lunar\Models\Channel;
@@ -22,6 +23,8 @@ use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
 {
+    use MakesJsonApiRequests;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -138,6 +141,15 @@ class TestCase extends Orchestra
             'public_key' => env('STRIPE_PUBLIC_KEY'),
             'key' => env('STRIPE_SECRET_KEY'),
             'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
+        ]);
+
+        // Default payment driver
+        Config::set('lunar.payments.default', 'stripe');
+        Config::set('lunar.payments.types', [
+            'stripe' => [
+                'driver' => 'stripe',
+                'authorized' => 'payment-stripe',
+            ],
         ]);
     }
 
