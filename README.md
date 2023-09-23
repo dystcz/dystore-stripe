@@ -1,11 +1,11 @@
-# This is my package lunar-api-stripe-adapter
+# Lunar API Stripe Adapter
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/dystcz/lunar-api-stripe-adapter.svg?style=flat-square)](https://packagist.org/packages/dystcz/lunar-api-stripe-adapter)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/dystcz/lunar-api-stripe-adapter/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/dystcz/lunar-api-stripe-adapter/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/dystcz/lunar-api-stripe-adapter/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/dystcz/lunar-api-stripe-adapter/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
+![GitHub Actions](https://github.com/dystcz/lunar-api-stripe-adapter/actions/workflows/tests.yaml/badge.svg)
+
 [![Total Downloads](https://img.shields.io/packagist/dt/dystcz/lunar-api-stripe-adapter.svg?style=flat-square)](https://packagist.org/packages/dystcz/lunar-api-stripe-adapter)
 
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+TODO: Write description
 
 ## Installation
 
