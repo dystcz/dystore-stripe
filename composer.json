@@ -22,8 +22,7 @@
         "php": "^8.2",
         "dystcz/lunar-api": "^0.6",
         "illuminate/contracts": "^10.0",
-        "lunarphp/stripe": "^0.6",
-        "spatie/laravel-package-tools": "^1.14.0"
+        "lunarphp/stripe": "^0.6"
     },
     "require-dev": {
         "laravel/pint": "^1.0",
