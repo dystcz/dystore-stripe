@@ -2,23 +2,29 @@
 
 namespace Dystcz\LunarApiStripeAdapter;
 
-use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Dystcz\LunarApiStripeAdapter\Managers\StripeManager;
+use Illuminate\Support\ServiceProvider;
 
-class LunarApiStripeAdapterServiceProvider extends PackageServiceProvider
+class LunarApiStripeAdapterServiceProvider extends ServiceProvider
 {
-    public function configurePackage(Package $package): void
+    /**
+     * Bootstrap the application services.
+     */
+    public function boot(): void
     {
-        /*
-         * This class is a Package Service Provider
-         *
-         * More info: https://github.com/spatie/laravel-package-tools
-         */
-        $package->name('lunar-api-stripe-adapter')->hasConfigFile();
+        $this->app->singleton('gc:stripe', function ($app) {
+            return $app->make(StripeManager::class);
+        });
+
+        StripePaymentAdapter::register();
     }
 
-    public function packageRegistered()
+    /**
+     * Register the application services.
+     */
+    public function register(): void
     {
-        StripePaymentAdapter::register();
+        // Automatically apply the package configuration
+        $this->mergeConfigFrom(__DIR__.'/../config/lunar-api-stripe-adapter.php', 'lunar-api-stripe-adapter');
     }
 }

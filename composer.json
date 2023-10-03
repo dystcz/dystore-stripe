@@ -1,6 +1,6 @@
 {
     "name": "dystcz/lunar-api-stripe-adapter",
-    "description": "This is my package lunar-api-stripe-adapter",
+    "description": "Lunar API Stripe Adapter",
     "keywords": [
         "dystcz",
         "lunar",
@@ -20,10 +20,9 @@
     ],
     "require": {
         "php": "^8.2",
-        "dystcz/lunar-api": "^0.6",
+        "dystcz/lunar-api": "^0.6.0",
         "illuminate/contracts": "^10.0",
-        "lunarphp/stripe": "^0.6",
-        "spatie/laravel-package-tools": "^1.14.0"
+        "lunarphp/stripe": "^0.6.0"
     },
     "require-dev": {
         "laravel/pint": "^1.0",
