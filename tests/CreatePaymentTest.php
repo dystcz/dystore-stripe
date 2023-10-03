@@ -42,5 +42,4 @@ test('a payment intent can be created', function (string $paymentMethod) {
 
     expect($response->json('meta.payment_intent.id'))
         ->toBe($this->cart->fresh()->meta['payment_intent']);
-})
-    ->with(['stripe']);
+})->with(['stripe']);
