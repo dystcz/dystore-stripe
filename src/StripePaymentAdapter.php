@@ -37,13 +37,14 @@ class StripePaymentAdapter extends PaymentAdapter
     {
         $this->cart = $cart;
 
-        /** @var \Stripe\PaymentIntent $intent */
+        /** @var Stripe\PaymentIntent $intent */
         $intent = StripeFacade::createIntent($cart->calculate());
 
         $this->createTransaction($intent->id, $intent->amount);
 
         return new PaymentIntent(
-            id: $intent->id
+            id: $intent->id,
+            client_secret: $intent->client_secret,
         );
     }
 
