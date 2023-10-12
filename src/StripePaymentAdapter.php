@@ -50,7 +50,7 @@ class StripePaymentAdapter extends PaymentAdapter
 
     public function handleWebhook(Request $request): JsonResponse
     {
-        if (config('app.env') !== 'testing') {
+        if (! App::environment('testing')) {
             $event = $this->constructEventForNonTestingEnv($request);
 
             if ($event instanceof JsonResponse) {
