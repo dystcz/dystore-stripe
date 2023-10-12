@@ -10,29 +10,39 @@ use Dystcz\LunarApi\Domain\Payments\PaymentAdapters\PaymentIntent;
 use Dystcz\LunarApiStripeAdapter\Actions\AuthorizeStripePayment;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Lunar\Models\Cart;
 use Lunar\Stripe\Facades\StripeFacade;
-use RuntimeException;
 use Stripe\Event;
 use Stripe\Exception\SignatureVerificationException;
 use Stripe\Webhook;
+use Throwable;
 use UnexpectedValueException;
 
 class StripePaymentAdapter extends PaymentAdapter
 {
+    /**
+     * Get payment driver.
+     */
     public function getDriver(): string
     {
-        return Config::get('lunar-api-stripe-adapter.driver');
+        return Config::get('lunar-api-stripe-adapter.driver', 'stripe');
     }
 
+    /**
+     * Get payment type.
+     */
     public function getType(): string
     {
-        return Config::get('lunar-api-stripe-adapter.type');
+        return Config::get('lunar-api-stripe-adapter.type', 'stripe');
     }
 
+    /**
+     * Create payment intent.
+     */
     public function createIntent(Cart $cart): PaymentIntent
     {
         $this->cart = $cart;
@@ -48,23 +58,30 @@ class StripePaymentAdapter extends PaymentAdapter
         );
     }
 
+    /**
+     * Handle incoming Stripe webhook.
+     */
     public function handleWebhook(Request $request): JsonResponse
     {
-        if (! App::environment('testing')) {
-            $event = $this->constructEventForNonTestingEnv($request);
+        $event = App::environment('testing')
+            // Construct directly from request in testing environment
+            ? Event::constructFrom($request->all())
+            // Construct from Stripe webhook while checking signature
+            : $this->constructEvent($request);
 
-            if ($event instanceof JsonResponse) {
-                return $event;
-            }
-        } else {
-            $event = Event::constructFrom($request->all());
+        // Return early if event counld not be constructed
+        if ($event instanceof JsonResponse) {
+            return $event;
         }
 
         $paymentIntent = $event->data->object;
-        $order = App::make(FindOrderByIntent::class)($paymentIntent->id);
 
-        if (! $order) {
-            throw new RuntimeException('Order not found for payment intent: '.$paymentIntent->id);
+        try {
+            $order = App::make(FindOrderByIntent::class)($paymentIntent->id);
+        } catch (Throwable $e) {
+            return new JsonResponse([
+                'message' => "Order not found for payment intent {$paymentIntent->id}",
+            ], 404);
         }
 
         switch ($event->type) {
@@ -81,27 +98,34 @@ class StripePaymentAdapter extends PaymentAdapter
                 Log::info('Received unknown event type '.$event->type);
         }
 
-        return response()->json(['message' => 'success']);
+        return new JsonResource([
+            'message' => 'success',
+        ]);
     }
 
-    protected function constructEventForNonTestingEnv(Request $request): JsonResponse|Event
+    /**
+     * Construct Stripe event.
+     */
+    protected function constructEvent(Request $request): JsonResponse|Event
     {
-        $payload = file_get_contents('php://input');
-
         try {
             return Webhook::constructEvent(
-                $payload,
+                $request->getContent(),
                 $request->header('Stripe-Signature'),
                 Config::get('services.stripe.webhook_secret')
             );
         } catch (UnexpectedValueException $e) {
             report($e);
 
-            return response()->json(['error' => 'Invalid payload'], 400);
+            return new JsonResponse([
+                'error' => 'Invalid payload',
+            ], 400);
         } catch (SignatureVerificationException $e) {
             report($e);
 
-            return response()->json(['error' => 'Invalid signature'], 400);
+            return new JsonResponse([
+                'error' => 'Invalid signature',
+            ], 400);
         }
     }
 }
