@@ -2,11 +2,16 @@
 
 use Dystcz\LunarApi\Domain\Carts\Events\CartCreated;
 use Dystcz\LunarApi\Domain\Carts\Models\Cart;
+use Dystcz\LunarApiStripeAdapter\Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\URL;
 use Lunar\Facades\CartSession;
 
+uses(TestCase::class, RefreshDatabase::class);
+
 beforeEach(function () {
+    /** @var TestCase $this */
     Event::fake(CartCreated::class);
 
     /** @var Cart $cart */
@@ -22,8 +27,10 @@ beforeEach(function () {
 });
 
 test('a payment intent can be created', function (string $paymentMethod) {
-    $url = URL::temporarySignedRoute(
-        'v1.orders.createPaymentIntent', now()->addDays(28), ['order' => $this->order->id]
+    /** @var TestCase $this */
+    $url = URL::signedRoute(
+        'v1.orders.createPaymentIntent',
+        ['order' => $this->order->id],
     );
 
     $response = $this
