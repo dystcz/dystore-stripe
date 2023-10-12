@@ -17,6 +17,7 @@ class AuthorizeStripePayment
 
         /** @var PaymentAuthorize $payment */
         $payment = Payments::driver('stripe')
+            ->order($order)
             ->cart($order->cart)
             ->withData([
                 'payment_intent_client_secret' => $intent->client_secret,
@@ -25,7 +26,7 @@ class AuthorizeStripePayment
             ->authorize();
 
         if (! $payment->success) {
-            report('Payment failed for order: '.$order->id.' with reason: '.$payment->message);
+            report("Payment failed for order: {$order->id} with reason: $payment->message");
 
             return;
         }
