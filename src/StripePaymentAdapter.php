@@ -47,14 +47,17 @@ class StripePaymentAdapter extends PaymentAdapter
         $this->cart = $cart;
 
         /** @var Stripe\PaymentIntent $intent */
-        $intent = StripeFacade::createIntent($cart->calculate());
+        $stripePaymentIntent = StripeFacade::createIntent($cart->calculate());
 
-        $this->createTransaction($intent->id, $intent->amount);
-
-        return new PaymentIntent(
-            id: $intent->id,
-            client_secret: $intent->client_secret,
+        $paymentIntent = new PaymentIntent(
+            id: $stripePaymentIntent->id,
+            amount: $stripePaymentIntent->amount,
+            client_secret: $stripePaymentIntent->client_secret,
         );
+
+        $this->createTransaction($paymentIntent);
+
+        return $paymentIntent;
     }
 
     /**
@@ -73,10 +76,15 @@ class StripePaymentAdapter extends PaymentAdapter
             return $event;
         }
 
-        $paymentIntent = $event->data->object;
+        $stripePaymentIntent = $event->data->object;
+        $paymentIntent = new PaymentIntent(
+            id: $stripePaymentIntent->id,
+            amount: $stripePaymentIntent->amount,
+            client_secret: $stripePaymentIntent->client_secret,
+        );
 
         try {
-            $order = App::make(FindOrderByIntent::class)($paymentIntent->id);
+            $order = App::make(FindOrderByIntent::class)($paymentIntent);
         } catch (Throwable $e) {
             return new JsonResponse([
                 'message' => "Order not found for payment intent {$paymentIntent->id}",
@@ -88,10 +96,10 @@ class StripePaymentAdapter extends PaymentAdapter
                 App::make(AuthorizeStripePayment::class)($order, $paymentIntent);
                 break;
             case 'payment_intent.canceled':
-                OrderPaymentCanceled::dispatch($order, $paymentIntent);
+                OrderPaymentCanceled::dispatch($order, $this, $paymentIntent);
                 break;
             case 'payment_intent.payment_failed':
-                OrderPaymentFailed::dispatch($order, $paymentIntent);
+                OrderPaymentFailed::dispatch($order, $this, $paymentIntent);
                 break;
             default:
                 Log::info('Received unknown event type '.$event->type);
