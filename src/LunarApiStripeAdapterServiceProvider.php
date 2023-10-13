@@ -3,6 +3,7 @@
 namespace Dystcz\LunarApiStripeAdapter;
 
 use Dystcz\LunarApiStripeAdapter\Managers\StripeManager;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 
 class LunarApiStripeAdapterServiceProvider extends ServiceProvider
@@ -12,9 +13,10 @@ class LunarApiStripeAdapterServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->app->singleton('gc:stripe', function ($app) {
-            return $app->make(StripeManager::class);
-        });
+        $this->app->singleton(
+            'gc:stripe',
+            fn (Application $app) => $app->make(StripeManager::class),
+        );
 
         StripePaymentAdapter::register();
     }
