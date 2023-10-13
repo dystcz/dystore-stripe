@@ -4,10 +4,10 @@ namespace Dystcz\LunarApiStripeAdapter\Actions;
 
 use Dystcz\LunarApi\Domain\Orders\Events\OrderPaid;
 use Dystcz\LunarApi\Domain\Orders\Models\Order;
+use Dystcz\LunarApi\Domain\Payments\PaymentAdapters\PaymentIntent;
 use Illuminate\Support\Facades\Log;
 use Lunar\Base\DataTransferObjects\PaymentAuthorize;
 use Lunar\Facades\Payments;
-use Stripe\PaymentIntent;
 
 class AuthorizeStripePayment
 {
