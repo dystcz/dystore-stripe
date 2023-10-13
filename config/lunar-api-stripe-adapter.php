@@ -2,7 +2,7 @@
 
 return [
     'driver' => 'stripe',
-    'type' => 'card',
+    'type' => 'stripe',
     'automatic_payment_methods' => true,
     'payment_method_types' => ['card'],
 
