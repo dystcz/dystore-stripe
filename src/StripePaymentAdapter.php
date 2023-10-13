@@ -52,6 +52,7 @@ class StripePaymentAdapter extends PaymentAdapter
         $paymentIntent = new PaymentIntent(
             id: $stripePaymentIntent->id,
             amount: $stripePaymentIntent->amount,
+            status: 'intent',
             client_secret: $stripePaymentIntent->client_secret,
         );
 
@@ -77,9 +78,18 @@ class StripePaymentAdapter extends PaymentAdapter
         }
 
         $stripePaymentIntent = $event->data->object;
+
+        $statusMap = Config::get('lunar-api-stripe-adapter.payment_intent_status_map', []);
+
+        $paymentIntentStatus = match (true) {
+            in_array($event->type, array_keys($statusMap)) => $statusMap[$event->type],
+            default => 'intent',
+        };
+
         $paymentIntent = new PaymentIntent(
             id: $stripePaymentIntent->id,
             amount: $stripePaymentIntent->amount,
+            status: $paymentIntentStatus,
             client_secret: $stripePaymentIntent->client_secret,
         );
 
@@ -91,14 +101,14 @@ class StripePaymentAdapter extends PaymentAdapter
             ], 404);
         }
 
-        switch ($event->type) {
-            case 'payment_intent.succeeded':
+        switch ($paymentIntentStatus) {
+            case 'succeeded':
                 App::make(AuthorizeStripePayment::class)($order, $paymentIntent);
                 break;
-            case 'payment_intent.canceled':
+            case 'canceled':
                 OrderPaymentCanceled::dispatch($order, $this, $paymentIntent);
                 break;
-            case 'payment_intent.payment_failed':
+            case 'failed':
                 OrderPaymentFailed::dispatch($order, $this, $paymentIntent);
                 break;
             default:
