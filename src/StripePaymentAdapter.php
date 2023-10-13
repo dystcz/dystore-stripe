@@ -10,7 +10,6 @@ use Dystcz\LunarApi\Domain\Payments\PaymentAdapters\PaymentIntent;
 use Dystcz\LunarApiStripeAdapter\Actions\AuthorizeStripePayment;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
@@ -98,7 +97,7 @@ class StripePaymentAdapter extends PaymentAdapter
                 Log::info('Received unknown event type '.$event->type);
         }
 
-        return new JsonResource([
+        return new JsonResponse([
             'message' => 'success',
         ]);
     }
