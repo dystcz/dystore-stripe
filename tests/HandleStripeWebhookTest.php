@@ -32,20 +32,9 @@ beforeEach(function () {
 
     $this->intent = PaymentIntent::retrieve($intentId);
 
-    $cart->update([
-        'meta' => [
-            'payment_intent' => $this->intent->id,
-        ],
-    ]);
-
-    $order->update([
-        'meta' => [
-            'payment_intent' => $this->intent->id,
-        ],
-    ]);
-
     $this->cart = $cart;
     $this->order = $order;
+
 });
 
 it('can handle succeeded event', function () {
