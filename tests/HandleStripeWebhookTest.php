@@ -64,7 +64,8 @@ it('can handle canceled event', function () {
 
     $data = json_decode(file_get_contents(__DIR__.'/Stubs/Stripe/payment_intent.canceled.json'), true);
 
-    $data['data']['object']['id'] = $this->cart->meta['payment_intent'];
+    $paymentIntentId = $this->cart->meta['payment_intent'];
+    $data['data']['object']['id'] = $paymentIntentId;
 
     $this->post('/stripe/webhook', $data)
         ->assertSuccessful();
