@@ -49,7 +49,20 @@ class StripePaymentAdapter extends PaymentAdapter
         /** @var Stripe\PaymentIntent $intent */
         $intent = StripeFacade::createIntent($cart->calculate());
 
-        $this->createTransaction($intent->id, $intent->amount);
+        // Do not create a new intent if the order already has one
+        if (Config::get('lunar-api.domains.cart.forget_cart_after_order_created', true) && $cart->order) {
+            /** @var Transaction $transaction */
+            $transaction = App::make(GetLastOrderTransaction::class)(
+                order: $cart->order,
+                driver: Config::get('lunar-api-stripe-adapter.driver', 'stripe'),
+                type: 'intent',
+            );
+
+            // Create a new transaction if the order does not have one for the intent
+            if (! $transaction || $transaction->reference !== $intent->id) {
+                $this->createTransaction($intent->id, $intent->amount);
+            }
+        }
 
         return new PaymentIntent(
             id: $intent->id,
