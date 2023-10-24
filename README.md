@@ -18,7 +18,7 @@ composer require dystcz/lunar-api-stripe-adapter
 You can publish the config file with:
 
 ```bash
-php artisan vendor:publish --tag="lunar-api-stripe-adapter-config"
+php artisan vendor:publish --provider="Dystcz\LunarApiStripeAdapter\LunarApiStripeAdapterServiceProvider" --tag="config"
 ```
 
 This is the contents of the published config file:
