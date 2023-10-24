@@ -19,6 +19,12 @@ class LunarApiStripeAdapterServiceProvider extends ServiceProvider
         );
 
         StripePaymentAdapter::register();
+
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__.'/../config/lunar-api-stripe.php' => config_path('lunar-api-stripe.php'),
+            ], 'config');
+        }
     }
 
     /**
@@ -27,6 +33,6 @@ class LunarApiStripeAdapterServiceProvider extends ServiceProvider
     public function register(): void
     {
         // Automatically apply the package configuration
-        $this->mergeConfigFrom(__DIR__.'/../config/lunar-api-stripe-adapter.php', 'lunar-api-stripe-adapter');
+        $this->mergeConfigFrom(__DIR__.'/../config/lunar-api-stripe.php', 'lunar-api-stripe');
     }
 }
