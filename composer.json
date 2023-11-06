@@ -20,9 +20,9 @@
     ],
     "require": {
         "php": "^8.2",
-        "dystcz/lunar-api": "^0.6.0-dev",
+        "dystcz/lunar-api": "^0.7.0-dev",
         "illuminate/contracts": "^10.0",
-        "lunarphp/stripe": "^0.6.0"
+        "lunarphp/stripe": "^0.7.0"
     },
     "require-dev": {
         "laravel/pint": "^1.0",
