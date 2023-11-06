@@ -129,7 +129,7 @@ class StripePaymentAdapter extends PaymentAdapter
             return Webhook::constructEvent(
                 $request->getContent(),
                 $request->header('Stripe-Signature'),
-                Config::get('services.stripe.webhook_secret')
+                Config::get('services.stripe.webhooks.payment_intent')
             );
         } catch (UnexpectedValueException $e) {
             report($e);
