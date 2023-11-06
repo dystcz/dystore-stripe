@@ -63,7 +63,7 @@ class TestCase extends Orchestra
         activity()->disableLogging();
     }
 
-    protected function getPackageProviders($app)
+    protected function getPackageProviders($app): array
     {
         return [
             // Laravel JsonApi
@@ -97,7 +97,7 @@ class TestCase extends Orchestra
     /**
      * @param  Application  $app
      */
-    public function getEnvironmentSetUp($app)
+    public function getEnvironmentSetUp($app): void
     {
         $app->useEnvironmentPath(__DIR__.'/..');
         $app->bootstrapWith([LoadEnvironmentVariables::class]);
@@ -140,7 +140,9 @@ class TestCase extends Orchestra
         Config::set('services.stripe', [
             'public_key' => env('STRIPE_PUBLIC_KEY'),
             'key' => env('STRIPE_SECRET_KEY'),
-            'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
+            'webhooks' => [
+                'payment_intent' => env('STRIPE_WEBHOOK_SECRET'),
+            ],
         ]);
 
         // Default payment driver
@@ -155,10 +157,8 @@ class TestCase extends Orchestra
 
     /**
      * Define database migrations.
-     *
-     * @return void
      */
-    protected function defineDatabaseMigrations()
+    protected function defineDatabaseMigrations(): void
     {
         $this->loadLaravelMigrations();
     }
