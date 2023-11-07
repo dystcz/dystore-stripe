@@ -9,6 +9,15 @@ use Illuminate\Support\ServiceProvider;
 class LunarApiStripeAdapterServiceProvider extends ServiceProvider
 {
     /**
+     * Register the application services.
+     */
+    public function register(): void
+    {
+        // Automatically apply the package configuration
+        $this->mergeConfigFrom(__DIR__.'/../config/stripe.php', 'lunar-api.stripe');
+    }
+
+    /**
      * Bootstrap the application services.
      */
     public function boot(): void
@@ -25,14 +34,5 @@ class LunarApiStripeAdapterServiceProvider extends ServiceProvider
                 __DIR__.'/../config/stripe.php' => config_path('lunar-api/stripe.php'),
             ], 'lunar-api.stripe.config');
         }
-    }
-
-    /**
-     * Register the application services.
-     */
-    public function register(): void
-    {
-        // Automatically apply the package configuration
-        $this->mergeConfigFrom(__DIR__.'/../config/stripe.php', 'lunar-api.stripe');
     }
 }
