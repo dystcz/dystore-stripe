@@ -25,7 +25,7 @@ class StripeManager extends LunarStripeManager
         $intentData = [
             'amount' => $value,
             'currency' => $currencyCode,
-            'capture_method' => Config::get('lunar-api-stripe-adapter.capture_method', 'automatic'),
+            'capture_method' => Config::get('lunar-api.stripe.capture_method', 'automatic'),
             'shipping' => [
                 'name' => "{$shipping->first_name} {$shipping->last_name}",
                 'address' => [
@@ -41,9 +41,9 @@ class StripeManager extends LunarStripeManager
 
         $intentData = array_merge(
             $intentData,
-            Config::get('lunar-api-stripe-adapter.automatic_payment_methods', false)
+            Config::get('lunar-api.stripe.automatic_payment_methods', false)
             ? ['automatic_payment_methods' => ['enabled' => 'true']]
-            : ['payment_method_types' => Config::get('lunar-api-stripe-adapter.payment_method_types', ['card'])]
+            : ['payment_method_types' => Config::get('lunar-api.stripe.payment_method_types', ['card'])]
         );
 
         return PaymentIntent::create($intentData);

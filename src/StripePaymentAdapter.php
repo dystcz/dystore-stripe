@@ -28,7 +28,7 @@ class StripePaymentAdapter extends PaymentAdapter
      */
     public function getDriver(): string
     {
-        return Config::get('lunar-api-stripe-adapter.driver', 'stripe');
+        return Config::get('lunar-api.stripe.driver', 'stripe');
     }
 
     /**
@@ -36,7 +36,7 @@ class StripePaymentAdapter extends PaymentAdapter
      */
     public function getType(): string
     {
-        return Config::get('lunar-api-stripe-adapter.type', 'stripe');
+        return Config::get('lunar-api.stripe.type', 'stripe');
     }
 
     /**
@@ -79,7 +79,7 @@ class StripePaymentAdapter extends PaymentAdapter
 
         $stripePaymentIntent = $event->data->object;
 
-        $statusMap = Config::get('lunar-api-stripe-adapter.payment_intent_status_map', []);
+        $statusMap = Config::get('lunar-api.stripe.payment_intent_status_map', []);
 
         $paymentIntentStatus = match (true) {
             in_array($event->type, array_keys($statusMap)) => $statusMap[$event->type],

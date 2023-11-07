@@ -27,7 +27,7 @@ beforeEach(function () {
 
     $order = $cart->createOrder();
 
-    Config::set('lunar-api-stripe-adapter.automatic_payment_methods', false);
+    Config::set('lunar-api.stripe.automatic_payment_methods', false);
     $intentId = App::make(StripePaymentAdapter::class)->createIntent($cart)->id;
 
     $this->intent = PaymentIntent::retrieve($intentId);
