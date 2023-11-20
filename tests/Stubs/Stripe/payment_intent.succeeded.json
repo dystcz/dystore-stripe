@@ -7,9 +7,7 @@
         "object": {
             "id": "pi_3N8cfsHpEETAPIl80N89iHWo",
             "object": "payment_intent",
-            "allowed_source_types": [
-                "card"
-            ],
+            "allowed_source_types": ["card"],
             "amount": 2000,
             "amount_capturable": 0,
             "amount_details": {
@@ -104,14 +102,14 @@
                         },
                         "receipt_email": null,
                         "receipt_number": null,
-                        "receipt_url": "https:\/\/pay.stripe.com\/receipts\/payment\/CAcaFwoVYWNjdF8xOTZpSWNIcEVFVEFQSWw4KPHEkaMGMgYvfBMaNLU6LBYHzKPdQ-tn75m0mcLoW0FHQStgJzRzPdWSeK3Kgq1270xdRi0v_TLKLRtg",
+                        "receipt_url": "https://pay.stripe.com/receipts/payment/CAcaFwoVYWNjdF8xOTZpSWNIcEVFVEFQSWw4KPHEkaMGMgYvfBMaNLU6LBYHzKPdQ-tn75m0mcLoW0FHQStgJzRzPdWSeK3Kgq1270xdRi0v_TLKLRtg",
                         "refunded": false,
                         "refunds": {
                             "object": "list",
                             "data": [],
                             "has_more": false,
                             "total_count": 0,
-                            "url": "\/v1\/charges\/ch_3N8cfsHpEETAPIl805407YXh\/refunds"
+                            "url": "/v1/charges/ch_3N8cfsHpEETAPIl805407YXh/refunds"
                         },
                         "review": null,
                         "shipping": {
@@ -139,7 +137,7 @@
                 ],
                 "has_more": false,
                 "total_count": 1,
-                "url": "\/v1\/charges?payment_intent=pi_3N8cfsHpEETAPIl80N89iHWo"
+                "url": "/v1/charges?payment_intent=pi_3N8cfsHpEETAPIl80N89iHWo"
             },
             "client_secret": "pi_3N8cfsHpEETAPIl80N89iHWo_secret_Et9RkWuJQiaOcCauqsAcLkh1I",
             "confirmation_method": "automatic",
@@ -164,9 +162,7 @@
                     "request_three_d_secure": "automatic"
                 }
             },
-            "payment_method_types": [
-                "card"
-            ],
+            "payment_method_types": ["card"],
             "processing": null,
             "receipt_email": null,
             "review": null,

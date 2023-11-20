@@ -7,9 +7,7 @@
         "object": {
             "id": "pi_3N8dgGHpEETAPIl81TPRwPqT",
             "object": "payment_intent",
-            "allowed_source_types": [
-                "card"
-            ],
+            "allowed_source_types": ["card"],
             "amount": 2000,
             "amount_capturable": 0,
             "amount_details": {
@@ -111,7 +109,7 @@
                             "data": [],
                             "has_more": false,
                             "total_count": 0,
-                            "url": "\/v1\/charges\/ch_3N8dgGHpEETAPIl81vQEN9t1\/refunds"
+                            "url": "/v1/charges/ch_3N8dgGHpEETAPIl81vQEN9t1/refunds"
                         },
                         "review": null,
                         "shipping": null,
@@ -126,7 +124,7 @@
                 ],
                 "has_more": false,
                 "total_count": 1,
-                "url": "\/v1\/charges?payment_intent=pi_3N8dgGHpEETAPIl81TPRwPqT"
+                "url": "/v1/charges?payment_intent=pi_3N8dgGHpEETAPIl81TPRwPqT"
             },
             "client_secret": "pi_3N8dgGHpEETAPIl81TPRwPqT_secret_QfAGz9HDyocgehT0n59HH6Yk7",
             "confirmation_method": "automatic",
@@ -139,7 +137,7 @@
                 "charge": "ch_3N8dgGHpEETAPIl81vQEN9t1",
                 "code": "card_declined",
                 "decline_code": "generic_decline",
-                "doc_url": "https:\/\/stripe.com\/docs\/error-codes\/card-declined",
+                "doc_url": "https://stripe.com/docs/error-codes/card-declined",
                 "message": "Your card was declined.",
                 "payment_method": {
                     "id": "pm_1N8dgFHpEETAPIl87B5o3Hlq",
@@ -172,9 +170,7 @@
                         "generated_from": null,
                         "last4": "0002",
                         "networks": {
-                            "available": [
-                                "visa"
-                            ],
+                            "available": ["visa"],
                             "preferred": null
                         },
                         "three_d_secure_usage": {
@@ -205,9 +201,7 @@
                     "request_three_d_secure": "automatic"
                 }
             },
-            "payment_method_types": [
-                "card"
-            ],
+            "payment_method_types": ["card"],
             "processing": null,
             "receipt_email": null,
             "review": null,
