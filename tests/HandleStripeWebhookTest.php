@@ -30,6 +30,16 @@ beforeEach(function () {
     Config::set('lunar-api.stripe.automatic_payment_methods', false);
     $intentId = App::make(StripePaymentAdapter::class)->createIntent($cart)->id;
 
+    $this->app->bind(\Lunar\Stripe\Concerns\ConstructsWebhookEvent::class, function ($app) {
+        return new class implements \Lunar\Stripe\Concerns\ConstructsWebhookEvent
+        {
+            public function constructEvent(string $jsonPayload, string $signature, string $secret)
+            {
+                return \Stripe\Event::constructFrom([]);
+            }
+        };
+    });
+
     $this->intent = PaymentIntent::retrieve($intentId);
 
     $this->cart = $cart;
@@ -56,7 +66,7 @@ it('can handle succeeded event', function () {
         ->post(
             '/stripe/webhook',
             $data,
-            ['Stripe-Signature' => 'foobar'],
+            ['Stripe-Signature' => $this->determineStripeSignature($data)],
         );
 
     $response->assertSuccessful();
@@ -74,7 +84,11 @@ it('can handle canceled event', function () {
     $data['data']['object']['id'] = $paymentIntentId;
 
     $response = $this
-        ->post('/stripe/webhook', $data);
+        ->post(
+            '/stripe/webhook',
+            $data,
+            ['Stripe-Signature' => $this->determineStripeSignature($data)],
+        );
 
     $response->assertSuccessful();
 
@@ -90,7 +104,11 @@ it('can handle payment_failed event', function () {
     $data['data']['object']['id'] = $this->cart->meta['payment_intent'];
 
     $response = $this
-        ->post('/stripe/webhook', $data);
+        ->post(
+            '/stripe/webhook',
+            $data,
+            ['Stripe-Signature' => $this->determineStripeSignature($data)],
+        );
 
     $response->assertSuccessful();
 
@@ -98,15 +116,17 @@ it('can handle payment_failed event', function () {
 })->todo();
 
 it('can handle any other event', function () {
+    $events = Event::fake();
+
     /** @var TestCase $this */
     $data = json_decode(file_get_contents(__DIR__.'/Stubs/Stripe/charge.succeeded.json'), true);
 
-    $data['data']['object']['id'] = $this->cart->meta['payment_intent'];
-
     $response = $this
-        ->post('/stripe/webhook', $data);
+        ->post(
+            '/stripe/webhook',
+            $data,
+            ['Stripe-Signature' => $this->determineStripeSignature($data)],
+        );
 
     $response->assertSuccessful();
-
-    Event::assertNothingDispatched();
 })->todo();

@@ -150,6 +150,22 @@ class TestCase extends Orchestra
     }
 
     /**
+     * Determine the Stripe signature.
+     */
+    protected function determineStripeSignature(array $payload, string $configKey = null): string
+    {
+        $secret = Config::get('services.stripe.webhooks.'.($configKey ?? 'payment_intent'));
+
+        $timestamp = time();
+
+        $timestampedPayload = $timestamp.'.'.json_encode($payload);
+
+        $signature = hash_hmac('sha256', $timestampedPayload, $secret);
+
+        return "t={$timestamp},v1={$signature}";
+    }
+
+    /**
      * Define database migrations.
      */
     protected function defineDatabaseMigrations(): void

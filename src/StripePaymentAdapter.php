@@ -83,7 +83,7 @@ class StripePaymentAdapter extends PaymentAdapter
 
         $paymentIntentStatus = match (true) {
             in_array($event->type, array_keys($statusMap)) => $statusMap[$event->type],
-            default => 'intent',
+            default => 'unknown',
         };
 
         $paymentIntent = new PaymentIntent(
