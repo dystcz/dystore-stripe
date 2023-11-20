@@ -52,9 +52,12 @@ it('can handle succeeded event', function () {
 
     $this->intent->confirm();
 
-    // TODO: Add Stripe-Signature header somehow
     $response = $this
-        ->post('/stripe/webhook', $data);
+        ->post(
+            '/stripe/webhook',
+            $data,
+            ['Stripe-Signature' => 'foobar'],
+        );
 
     $response->assertSuccessful();
 
@@ -70,7 +73,6 @@ it('can handle canceled event', function () {
     $paymentIntentId = $this->cart->meta['payment_intent'];
     $data['data']['object']['id'] = $paymentIntentId;
 
-    // TODO: Add Stripe-Signature header somehow
     $response = $this
         ->post('/stripe/webhook', $data);
 
@@ -87,11 +89,24 @@ it('can handle payment_failed event', function () {
 
     $data['data']['object']['id'] = $this->cart->meta['payment_intent'];
 
-    // TODO: Add Stripe-Signature header somehow
     $response = $this
         ->post('/stripe/webhook', $data);
 
     $response->assertSuccessful();
 
     Event::assertDispatched(OrderPaymentFailed::class);
+})->todo();
+
+it('can handle any other event', function () {
+    /** @var TestCase $this */
+    $data = json_decode(file_get_contents(__DIR__.'/Stubs/Stripe/charge.succeeded.json'), true);
+
+    $data['data']['object']['id'] = $this->cart->meta['payment_intent'];
+
+    $response = $this
+        ->post('/stripe/webhook', $data);
+
+    $response->assertSuccessful();
+
+    Event::assertNothingDispatched();
 })->todo();

@@ -30,7 +30,7 @@ test('a payment intent can be created', function (string $paymentMethod) {
     /** @var TestCase $this */
     $url = URL::signedRoute(
         'v1.orders.createPaymentIntent',
-        ['order' => $this->order->id],
+        ['order' => $this->order->getRouteKey()],
     );
 
     $response = $this
