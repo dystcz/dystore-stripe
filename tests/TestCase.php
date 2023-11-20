@@ -66,6 +66,9 @@ class TestCase extends Orchestra
     protected function getPackageProviders($app): array
     {
         return [
+            // Ray
+            \Spatie\LaravelRay\RayServiceProvider::class,
+
             // Laravel JsonApi
             \LaravelJsonApi\Encoder\Neomerx\ServiceProvider::class,
             \LaravelJsonApi\Laravel\ServiceProvider::class,
@@ -115,15 +118,6 @@ class TestCase extends Orchestra
         ]);
         Config::set('lunar.urls.generator', TestUrlGenerator::class);
         Config::set('lunar.taxes.driver', 'test');
-
-        // Default payment driver
-        Config::set('lunar.payments.default', 'card');
-
-        // Stripe payment adapter
-        // Config::set('lunar-api-stripe-adapter', [
-        //     'driver' => 'stripe',
-        //     'type' => 'card',
-        // ]);
 
         /**
          * App configuration
