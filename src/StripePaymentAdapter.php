@@ -40,11 +40,38 @@ class StripePaymentAdapter extends PaymentAdapter
     }
 
     /**
-     * Create payment intent.
+     * Set cart.
      */
-    public function createIntent(Cart $cart): PaymentIntent
+    protected function setCart(Cart $cart): void
     {
         $this->cart = $cart;
+    }
+
+    /**
+     * Update cart meta.
+     *
+     * @param  array<string,mixed>  $meta
+     */
+    protected function updateCartMeta(array $meta = []): void
+    {
+        if (empty($meta)) {
+            return;
+        }
+
+        $this->cart->update(
+            'meta',
+            array_merge($this->cart->meta, $meta),
+        );
+    }
+
+    /**
+     * Create payment intent.
+     */
+    public function createIntent(Cart $cart, array $meta = []): PaymentIntent
+    {
+        $this->setCart($cart);
+
+        $this->updateCartMeta($meta);
 
         /** @var Stripe\PaymentIntent $intent */
         $stripePaymentIntent = StripeFacade::createIntent($cart->calculate());
