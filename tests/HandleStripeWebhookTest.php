@@ -33,7 +33,7 @@ beforeEach(function () {
     $this->app->bind(\Lunar\Stripe\Concerns\ConstructsWebhookEvent::class, function ($app) {
         return new class implements \Lunar\Stripe\Concerns\ConstructsWebhookEvent
         {
-            public function constructEvent(string $jsonPayload, string $signature, string $secret): \Stripe\Event
+            public function constructEvent(string $jsonPayload, string $signature, string $secret): Stripe\Event
             {
                 return \Stripe\Event::constructFrom([]);
             }
