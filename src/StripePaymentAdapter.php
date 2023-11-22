@@ -124,6 +124,7 @@ class StripePaymentAdapter extends PaymentAdapter
             $order = App::make(FindOrderByIntent::class)($paymentIntent);
         } catch (Throwable $e) {
             return new JsonResponse([
+                'webhook_successful' => false,
                 'message' => "Order not found for payment intent {$paymentIntent->id}",
             ], 404);
         }
@@ -143,7 +144,8 @@ class StripePaymentAdapter extends PaymentAdapter
         }
 
         return new JsonResponse([
-            'message' => 'success',
+            'webhook_successful' => true,
+            'message' => 'Webook handled successfully',
         ]);
     }
 
@@ -158,17 +160,12 @@ class StripePaymentAdapter extends PaymentAdapter
                 $request->header('Stripe-Signature'),
                 Config::get('services.stripe.webhooks.payment_intent')
             );
-        } catch (UnexpectedValueException $e) {
+        } catch (UnexpectedValueException|SignatureVerificationException $e) {
             report($e);
 
             return new JsonResponse([
-                'error' => 'Invalid payload',
-            ], 400);
-        } catch (SignatureVerificationException $e) {
-            report($e);
-
-            return new JsonResponse([
-                'error' => 'Invalid signature',
+                'webhook_successful' => false,
+                'message' => $e->getMessage(),
             ], 400);
         }
     }

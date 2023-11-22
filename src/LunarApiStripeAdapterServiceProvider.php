@@ -27,6 +27,8 @@ class LunarApiStripeAdapterServiceProvider extends ServiceProvider
             fn (Application $app) => $app->make(StripeManager::class),
         );
 
+        $this->loadRoutesFrom(__DIR__.'/../routes/webhooks.php');
+
         StripePaymentAdapter::register();
 
         if ($this->app->runningInConsole()) {

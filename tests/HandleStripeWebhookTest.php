@@ -33,7 +33,7 @@ beforeEach(function () {
     $this->app->bind(\Lunar\Stripe\Concerns\ConstructsWebhookEvent::class, function ($app) {
         return new class implements \Lunar\Stripe\Concerns\ConstructsWebhookEvent
         {
-            public function constructEvent(string $jsonPayload, string $signature, string $secret)
+            public function constructEvent(string $jsonPayload, string $signature, string $secret): \Stripe\Event
             {
                 return \Stripe\Event::constructFrom([]);
             }
@@ -72,7 +72,7 @@ it('can handle succeeded event', function () {
     $response->assertSuccessful();
 
     Event::assertDispatched(OrderPaid::class);
-})->todo();
+});
 
 it('can handle canceled event', function () {
     /** @var TestCase $this */
@@ -93,7 +93,7 @@ it('can handle canceled event', function () {
     $response->assertSuccessful();
 
     Event::assertDispatched(OrderPaymentCanceled::class);
-})->todo();
+});
 
 it('can handle payment_failed event', function () {
     /** @var TestCase $this */
@@ -113,7 +113,7 @@ it('can handle payment_failed event', function () {
     $response->assertSuccessful();
 
     Event::assertDispatched(OrderPaymentFailed::class);
-})->todo();
+});
 
 it('can handle any other event', function () {
     $events = Event::fake();
