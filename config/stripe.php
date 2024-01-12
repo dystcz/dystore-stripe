@@ -2,7 +2,6 @@
 
 return [
     'driver' => 'stripe',
-
     'type' => 'stripe',
 
     'payment_intent_status_map' => [
