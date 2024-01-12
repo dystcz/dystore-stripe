@@ -46,8 +46,6 @@ class StripePaymentAdapter extends PaymentAdapter
         /** @var Stripe\PaymentIntent $stripePaymentIntent */
         $stripePaymentIntent = StripeFacade::createIntent($cart->calculate());
 
-        $cart->update(['meta->payment_intent' => $stripePaymentIntent->id]);
-
         $paymentIntent = new PaymentIntent(
             id: $stripePaymentIntent->id,
             amount: $stripePaymentIntent->amount,
@@ -55,7 +53,7 @@ class StripePaymentAdapter extends PaymentAdapter
             client_secret: $stripePaymentIntent->client_secret,
         );
 
-        $this->createTransaction($paymentIntent);
+        $this->createTransaction($cart, $paymentIntent);
 
         return $paymentIntent;
     }
@@ -97,8 +95,15 @@ class StripePaymentAdapter extends PaymentAdapter
             ->where('meta->payment_intent', $paymentIntent->id)
             ->first();
 
+        if (! $cart) {
+            return new JsonResponse([
+                'webhook_successful' => false,
+                'message' => "Cart not find cart with payment_intent: {$paymentIntent->id}",
+            ], 200);
+        }
+
         /** @var Order $order */
-        $order = $cart->draftOrder ?: $cart->completedOrder;
+        $order = $cart->draftOrder ? $cart->draftOrder : $cart->completedOrder;
 
         switch ($paymentIntentStatus) {
             case 'succeeded':
