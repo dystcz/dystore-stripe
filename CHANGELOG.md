@@ -2,6 +2,14 @@
 
 All notable changes to `lunar-api-stripe-adapter` will be documented in this file.
 
+## v0.7.1 - 2024-01-12
+
+### What's Changed
+
+* Minor fixes, but should prevent webhooks from failing
+
+**Full Changelog**: https://github.com/dystcz/lunar-api-stripe-adapter/compare/0.7.0...0.7.1
+
 ## v0.7.0 - 2024-01-02
 
 * Re-release
