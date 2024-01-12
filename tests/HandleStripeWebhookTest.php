@@ -121,6 +121,8 @@ it('can handle any other event', function () {
     /** @var TestCase $this */
     $data = json_decode(file_get_contents(__DIR__.'/Stubs/Stripe/charge.succeeded.json'), true);
 
+    $data['data']['object']['id'] = $this->cart->meta['payment_intent'];
+
     $response = $this
         ->post(
             '/stripe/webhook',
@@ -129,4 +131,4 @@ it('can handle any other event', function () {
         );
 
     $response->assertSuccessful();
-})->todo();
+});
