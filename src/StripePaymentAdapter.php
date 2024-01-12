@@ -2,7 +2,6 @@
 
 namespace Dystcz\LunarApiStripeAdapter;
 
-use Dystcz\LunarApi\Domain\Orders\Actions\FindOrderByIntent;
 use Dystcz\LunarApi\Domain\Orders\Events\OrderPaymentCanceled;
 use Dystcz\LunarApi\Domain\Orders\Events\OrderPaymentFailed;
 use Dystcz\LunarApi\Domain\Payments\PaymentAdapters\PaymentAdapter;
@@ -14,11 +13,11 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Lunar\Models\Cart;
+use Lunar\Models\Order;
 use Lunar\Stripe\Facades\StripeFacade;
 use Stripe\Event;
 use Stripe\Exception\SignatureVerificationException;
 use Stripe\Webhook;
-use Throwable;
 use UnexpectedValueException;
 
 class StripePaymentAdapter extends PaymentAdapter
@@ -58,10 +57,10 @@ class StripePaymentAdapter extends PaymentAdapter
             return;
         }
 
-        $this->cart->update(
-            'meta',
-            array_merge($this->cart->meta, $meta),
-        );
+        $this->cart->update('meta', [
+            ...$this->cart->meta,
+            ...$meta,
+        ]);
     }
 
     /**
@@ -120,18 +119,17 @@ class StripePaymentAdapter extends PaymentAdapter
             client_secret: $stripePaymentIntent->client_secret,
         );
 
-        try {
-            $order = App::make(FindOrderByIntent::class)($paymentIntent);
-        } catch (Throwable $e) {
-            return new JsonResponse([
-                'webhook_successful' => false,
-                'message' => "Order not found for payment intent {$paymentIntent->id}",
-            ], 404);
-        }
+        $cart = Cart::query()
+            ->with(['draftOrder', 'completedOrder'])
+            ->where('meta->payment_intent', $paymentIntent->id)
+            ->first();
+
+        /** @var Order $order */
+        $order = $cart->draftOrder ?: $cart->completedOrder;
 
         switch ($paymentIntentStatus) {
             case 'succeeded':
-                App::make(AuthorizeStripePayment::class)($order, $paymentIntent);
+                App::make(AuthorizeStripePayment::class)($order, $cart, $paymentIntent);
                 break;
             case 'canceled':
                 OrderPaymentCanceled::dispatch($order, $this, $paymentIntent);

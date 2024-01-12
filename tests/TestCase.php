@@ -152,7 +152,7 @@ class TestCase extends Orchestra
     /**
      * Determine the Stripe signature.
      */
-    protected function determineStripeSignature(array $payload, string $configKey = null): string
+    protected function determineStripeSignature(array $payload, ?string $configKey = null): string
     {
         $secret = Config::get('services.stripe.webhooks.'.($configKey ?? 'payment_intent'));
 
