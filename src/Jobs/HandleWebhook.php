@@ -7,6 +7,7 @@ use Dystcz\LunarApi\Domain\Orders\Events\OrderPaymentFailed;
 use Dystcz\LunarApi\Domain\Payments\PaymentAdapters\PaymentIntent;
 use Dystcz\LunarApiStripeAdapter\Actions\AuthorizeStripePayment;
 use Dystcz\LunarApiStripeAdapter\StripePaymentAdapter;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -17,9 +18,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Lunar\Models\Cart;
 use Stripe\Event;
-use Stripe\Exception\SignatureVerificationException;
 use Stripe\Webhook;
-use UnexpectedValueException;
 
 class HandleWebhook implements ShouldQueue
 {
@@ -66,7 +65,7 @@ class HandleWebhook implements ShouldQueue
                 ->with(['draftOrder', 'completedOrder'])
                 ->where('meta->payment_intent', $paymentIntent->id)
                 ->firstOrFail();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->fail($e);
         }
 
@@ -103,7 +102,7 @@ class HandleWebhook implements ShouldQueue
                 $this->signature,
                 Config::get('services.stripe.webhooks.payment_intent'),
             );
-        } catch (UnexpectedValueException|SignatureVerificationException $e) {
+        } catch (Exception $e) {
             $this->fail($e);
         }
     }
