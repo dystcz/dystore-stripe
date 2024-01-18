@@ -2,6 +2,14 @@
 
 All notable changes to `lunar-api-stripe-adapter` will be documented in this file.
 
+## v0.7.2 - 2024-01-18
+
+### What's Changed
+
+* Handle webhooks on queue via `HandleWebhook` https://github.com/dystcz/lunar-api-stripe-adapter/commit/0b516495ab9c3fada78b073a1385b6e47a1a44c5
+
+**Full Changelog**: https://github.com/dystcz/lunar-api-stripe-adapter/compare/0.7.1...0.7.2
+
 ## v0.7.1 - 2024-01-12
 
 ### What's Changed
