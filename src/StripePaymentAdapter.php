@@ -83,6 +83,10 @@ class StripePaymentAdapter extends PaymentAdapter
             default => 'unknown',
         };
 
+        if (! in_array($paymentIntentStatus, ['succeeded'])) {
+            return new JsonResponse(null, 200);
+        }
+
         $paymentIntent = new PaymentIntent(
             id: $stripePaymentIntent->id,
             amount: $stripePaymentIntent->amount,
@@ -96,10 +100,9 @@ class StripePaymentAdapter extends PaymentAdapter
             ->first();
 
         if (! $cart) {
-            return new JsonResponse([
-                'webhook_successful' => false,
-                'message' => "Cart not find cart with payment_intent: {$paymentIntent->id}",
-            ], 200);
+            Log::error("Cart not found with payment_intent: {$paymentIntent->id}");
+
+            return new JsonResponse(null, 200);
         }
 
         /** @var Order $order */
@@ -119,10 +122,7 @@ class StripePaymentAdapter extends PaymentAdapter
                 Log::info('Received unknown event type '.$event->type);
         }
 
-        return new JsonResponse([
-            'webhook_successful' => true,
-            'message' => 'Webook handled successfully',
-        ]);
+        return new JsonResponse(null, 200);
     }
 
     /**
