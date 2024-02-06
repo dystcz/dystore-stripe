@@ -2,17 +2,12 @@
 
 namespace Dystcz\LunarApiStripeAdapter;
 
-use Dystcz\LunarApi\Domain\Orders\Actions\FindOrderByIntent;
-use Dystcz\LunarApi\Domain\Orders\Events\OrderPaymentCanceled;
-use Dystcz\LunarApi\Domain\Orders\Events\OrderPaymentFailed;
+use Dystcz\LunarApi\Domain\Payments\Contracts\PaymentIntent as PaymentIntentContract;
+use Dystcz\LunarApi\Domain\Payments\Data\PaymentIntent;
 use Dystcz\LunarApi\Domain\Payments\PaymentAdapters\PaymentAdapter;
-use Dystcz\LunarApi\Domain\Payments\PaymentAdapters\PaymentIntent;
-use Dystcz\LunarApiStripeAdapter\Actions\AuthorizeStripePayment;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Log;
 use Lunar\Models\Cart;
 use Lunar\Stripe\Facades\StripeFacade;
 use Lunar\Stripe\Managers\StripeManager;
@@ -20,8 +15,6 @@ use Spatie\StripeWebhooks\ProcessStripeWebhookJob;
 use Spatie\StripeWebhooks\StripeSignatureValidator;
 use Spatie\WebhookClient\WebhookConfig;
 use Spatie\WebhookClient\WebhookProcessor;
-use Stripe\Webhook;
-use Throwable;
 
 class StripePaymentAdapter extends PaymentAdapter
 {
@@ -36,8 +29,8 @@ class StripePaymentAdapter extends PaymentAdapter
             'signing_secret' => Config::get('stripe-webhooks.signing_secret'),
             'signature_header_name' => 'Stripe-Signature',
             'signature_validator' => StripeSignatureValidator::class,
-            'webhook_profile' => config('stripe-webhooks.profile'),
-            'webhook_model' => config('stripe-webhooks.model'),
+            'webhook_profile' => Config::get('stripe-webhooks.profile'),
+            'webhook_model' => Config::get('stripe-webhooks.model'),
             'process_webhook_job' => ProcessStripeWebhookJob::class,
         ]);
 
@@ -52,7 +45,7 @@ class StripePaymentAdapter extends PaymentAdapter
      */
     public function getDriver(): string
     {
-        return 'stripe';
+        return Config::get('lunar-api.stripe.driver', 'stripe');
     }
 
     /**
@@ -63,28 +56,25 @@ class StripePaymentAdapter extends PaymentAdapter
      */
     public function getType(): string
     {
-        return 'stripe';
-    }
-
-    /**
-     * Get Stripe manager.
-     */
-    private function getStripeManager(): StripeManager
-    {
-        return StripeFacade::getFacadeRoot();
+        return Config::get('lunar-api.stripe.type', 'stripe');
     }
 
     /**
      * Create payment intent.
      */
-    public function createIntent(Cart $cart, array $meta = []): PaymentIntent
+    public function createIntent(Cart $cart, array $meta = []): PaymentIntentContract
     {
         $cart = $this->updateCartMeta($cart, $meta);
 
         /** @var \Stripe\PaymentIntent $paymentIntent */
-        $paymentIntent = $this->stripeManager->createIntent($cart->calculate());
+        $stripePaymentIntent = $this->stripeManager->createIntent($cart->calculate());
 
-        $this->createTransaction($paymentIntent);
+        $paymentIntent = new PaymentIntent(
+            intent: $stripePaymentIntent,
+            meta: $meta,
+        );
+
+        $this->createIntentTransaction($cart, $paymentIntent, $meta);
 
         return $paymentIntent;
     }
@@ -95,34 +85,6 @@ class StripePaymentAdapter extends PaymentAdapter
     public function handleWebhook(Request $request): JsonResponse
     {
         return (new WebhookProcessor($request, $this->webhookConfig))->process();
-
-        try {
-            $order = App::make(FindOrderByIntent::class)($paymentIntent);
-        } catch (Throwable $e) {
-            return new JsonResponse([
-                'webhook_successful' => false,
-                'message' => "Order not found for payment intent {$paymentIntent->id}",
-            ], 404);
-        }
-
-        switch ($paymentIntentStatus) {
-            case 'succeeded':
-                App::make(AuthorizeStripePayment::class)($order, $paymentIntent);
-                break;
-            case 'canceled':
-                OrderPaymentCanceled::dispatch($order, $this, $paymentIntent);
-                break;
-            case 'failed':
-                OrderPaymentFailed::dispatch($order, $this, $paymentIntent);
-                break;
-            default:
-                Log::info('Received unknown event type '.$event->type);
-        }
-
-        return new JsonResponse([
-            'webhook_successful' => true,
-            'message' => 'Webook handled successfully',
-        ]);
     }
 
     /**
