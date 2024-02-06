@@ -3,7 +3,6 @@
 namespace Dystcz\LunarApiStripeAdapter\Tests;
 
 use Dystcz\LunarApiStripeAdapter\Tests\Stubs\Carts\Modifiers\TestShippingModifier;
-use Dystcz\LunarApiStripeAdapter\Tests\Stubs\JsonApi\V1\Server;
 use Dystcz\LunarApiStripeAdapter\Tests\Stubs\Lunar\TestTaxDriver;
 use Dystcz\LunarApiStripeAdapter\Tests\Stubs\Lunar\TestUrlGenerator;
 use Dystcz\LunarApiStripeAdapter\Tests\Stubs\Users\User;
@@ -68,6 +67,8 @@ class TestCase extends Orchestra
         return [
             // Ray
             \Spatie\LaravelRay\RayServiceProvider::class,
+            \Spatie\WebhookClient\WebhookClientServiceProvider::class,
+            \Spatie\StripeWebhooks\StripeWebhooksServiceProvider::class,
 
             // Laravel JsonApi
             \LaravelJsonApi\Encoder\Neomerx\ServiceProvider::class,
@@ -113,9 +114,6 @@ class TestCase extends Orchestra
         /**
          * Lunar configuration
          */
-        Config::set('lunar-api.additional_servers', [
-            Server::class,
-        ]);
         Config::set('lunar.urls.generator', TestUrlGenerator::class);
         Config::set('lunar.taxes.driver', 'test');
 
@@ -144,15 +142,19 @@ class TestCase extends Orchestra
         Config::set('lunar.payments.types', [
             'stripe' => [
                 'driver' => 'stripe',
-                'authorized' => 'payment-stripe',
+                'authorized' => 'payment-received',
             ],
         ]);
+
+        // Stripe webhooks
+        Config::set('stripe-webhooks.verify_signature', false);
+        Config::set('stripe-webhooks.connection', false);
     }
 
     /**
      * Determine the Stripe signature.
      */
-    protected function determineStripeSignature(array $payload, string $configKey = null): string
+    protected function determineStripeSignature(array $payload, ?string $configKey = null): string
     {
         $secret = Config::get('services.stripe.webhooks.'.($configKey ?? 'payment_intent'));
 
@@ -170,6 +172,7 @@ class TestCase extends Orchestra
      */
     protected function defineDatabaseMigrations(): void
     {
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         $this->loadLaravelMigrations();
     }
 }
