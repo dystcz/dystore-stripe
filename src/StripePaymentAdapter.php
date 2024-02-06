@@ -2,28 +2,46 @@
 
 namespace Dystcz\LunarApiStripeAdapter;
 
-use Dystcz\LunarApi\Domain\Orders\Events\OrderPaymentCanceled;
-use Dystcz\LunarApi\Domain\Orders\Events\OrderPaymentFailed;
+use Dystcz\LunarApi\Domain\Payments\Contracts\PaymentIntent as PaymentIntentContract;
+use Dystcz\LunarApi\Domain\Payments\Data\PaymentIntent;
 use Dystcz\LunarApi\Domain\Payments\PaymentAdapters\PaymentAdapter;
-use Dystcz\LunarApi\Domain\Payments\PaymentAdapters\PaymentIntent;
-use Dystcz\LunarApiStripeAdapter\Actions\AuthorizeStripePayment;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Log;
 use Lunar\Models\Cart;
-use Lunar\Models\Order;
 use Lunar\Stripe\Facades\StripeFacade;
-use Stripe\Event;
-use Stripe\Exception\SignatureVerificationException;
-use Stripe\Webhook;
-use UnexpectedValueException;
+use Lunar\Stripe\Managers\StripeManager;
+use Spatie\StripeWebhooks\ProcessStripeWebhookJob;
+use Spatie\StripeWebhooks\StripeSignatureValidator;
+use Spatie\WebhookClient\WebhookConfig;
+use Spatie\WebhookClient\WebhookProcessor;
 
 class StripePaymentAdapter extends PaymentAdapter
 {
+    protected StripeManager $stripeManager;
+
+    protected WebhookConfig $webhookConfig;
+
+    public function __construct()
+    {
+        $this->webhookConfig = new WebhookConfig([
+            'name' => 'stripe',
+            'signing_secret' => Config::get('stripe-webhooks.signing_secret'),
+            'signature_header_name' => 'Stripe-Signature',
+            'signature_validator' => StripeSignatureValidator::class,
+            'webhook_profile' => Config::get('stripe-webhooks.profile'),
+            'webhook_model' => Config::get('stripe-webhooks.model'),
+            'process_webhook_job' => ProcessStripeWebhookJob::class,
+        ]);
+
+        $this->stripeManager = StripeFacade::getFacadeRoot();
+    }
+
     /**
-     * Get payment driver.
+     * Get payment driver on which this adapter binds.
+     *
+     * Drivers for lunar are set in lunar.payments.types.
+     * When stripe is set as a driver, this adapter will be used.
      */
     public function getDriver(): string
     {
@@ -32,6 +50,9 @@ class StripePaymentAdapter extends PaymentAdapter
 
     /**
      * Get payment type.
+     *
+     * This key serves is an identification for this adapter.
+     * That means that stripe driver is handled by this adapter if configured.
      */
     public function getType(): string
     {
@@ -41,19 +62,19 @@ class StripePaymentAdapter extends PaymentAdapter
     /**
      * Create payment intent.
      */
-    public function createIntent(Cart $cart, array $meta = []): PaymentIntent
+    public function createIntent(Cart $cart, array $meta = []): PaymentIntentContract
     {
-        /** @var Stripe\PaymentIntent $stripePaymentIntent */
-        $stripePaymentIntent = StripeFacade::createIntent($cart->calculate());
+        $cart = $this->updateCartMeta($cart, $meta);
+
+        /** @var \Stripe\PaymentIntent $paymentIntent */
+        $stripePaymentIntent = $this->stripeManager->createIntent($cart->calculate());
 
         $paymentIntent = new PaymentIntent(
-            id: $stripePaymentIntent->id,
-            amount: $stripePaymentIntent->amount,
-            status: 'intent',
-            client_secret: $stripePaymentIntent->client_secret,
+            intent: $stripePaymentIntent,
+            meta: $meta,
         );
 
-        $this->createTransaction($cart, $paymentIntent);
+        $this->createIntentTransaction($cart, $paymentIntent, $meta);
 
         return $paymentIntent;
     }
@@ -63,86 +84,25 @@ class StripePaymentAdapter extends PaymentAdapter
      */
     public function handleWebhook(Request $request): JsonResponse
     {
-        $event = App::environment('testing')
-            // Construct directly from request in testing environment
-            ? Event::constructFrom($request->all())
-            // Construct from Stripe webhook while checking signature
-            : $this->constructEvent($request);
-
-        // Return early if event counld not be constructed
-        if ($event instanceof JsonResponse) {
-            return $event;
-        }
-
-        $stripePaymentIntent = $event->data->object;
-
-        $statusMap = Config::get('lunar-api.stripe.payment_intent_status_map', []);
-
-        $paymentIntentStatus = match (true) {
-            in_array($event->type, array_keys($statusMap)) => $statusMap[$event->type],
-            default => 'unknown',
-        };
-
-        if (! in_array($paymentIntentStatus, ['succeeded'])) {
-            return new JsonResponse(null, 200);
-        }
-
-        $paymentIntent = new PaymentIntent(
-            id: $stripePaymentIntent->id,
-            amount: $stripePaymentIntent->amount,
-            status: $paymentIntentStatus,
-            client_secret: $stripePaymentIntent->client_secret,
-        );
-
-        $cart = Cart::query()
-            ->with(['draftOrder', 'completedOrder'])
-            ->where('meta->payment_intent', $paymentIntent->id)
-            ->first();
-
-        if (! $cart) {
-            Log::error("Cart not found with payment_intent: {$paymentIntent->id}");
-
-            return new JsonResponse(null, 200);
-        }
-
-        /** @var Order $order */
-        $order = $cart->draftOrder ? $cart->draftOrder : $cart->completedOrder;
-
-        switch ($paymentIntentStatus) {
-            case 'succeeded':
-                App::make(AuthorizeStripePayment::class)($order, $cart, $paymentIntent);
-                break;
-            case 'canceled':
-                OrderPaymentCanceled::dispatch($order, $this, $paymentIntent);
-                break;
-            case 'failed':
-                OrderPaymentFailed::dispatch($order, $this, $paymentIntent);
-                break;
-            default:
-                Log::info('Received unknown event type '.$event->type);
-        }
-
-        return new JsonResponse(null, 200);
+        return (new WebhookProcessor($request, $this->webhookConfig))->process();
     }
 
     /**
-     * Construct Stripe event.
+     * Update cart meta.
+     *
+     * @param  array<string,mixed>  $meta
      */
-    protected function constructEvent(Request $request): JsonResponse|Event
+    protected function updateCartMeta(Cart $cart, array $meta = []): Cart
     {
-        try {
-            return Webhook::constructEvent(
-                $request->getContent(),
-                $request->header('Stripe-Signature'),
-                Config::get('services.stripe.webhooks.payment_intent')
-            );
-        } catch (UnexpectedValueException|SignatureVerificationException $e) {
-            report($e);
-
-            return new JsonResponse([
-                'webhook_successful' => false,
-                'message' => $e->getMessage(),
-            ], 400);
+        if (empty($meta)) {
+            return $cart;
         }
+
+        $cart->update('meta', [
+            ...$this->cart->meta,
+            ...$meta,
+        ]);
+
+        return $cart;
     }
 }

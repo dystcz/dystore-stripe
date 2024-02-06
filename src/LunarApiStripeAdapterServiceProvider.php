@@ -15,6 +15,7 @@ class LunarApiStripeAdapterServiceProvider extends ServiceProvider
     {
         // Automatically apply the package configuration
         $this->mergeConfigFrom(__DIR__.'/../config/stripe.php', 'lunar-api.stripe');
+        $this->mergeConfigFrom(__DIR__.'/../config/stripe-webhooks.php', 'stripe-webhooks');
     }
 
     /**
@@ -34,6 +35,10 @@ class LunarApiStripeAdapterServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->publishes([
                 __DIR__.'/../config/stripe.php' => config_path('lunar-api/stripe.php'),
+            ], 'lunar-api.stripe.config');
+
+            $this->publishes([
+                __DIR__.'/../config/stripe-webhooks.php' => config_path('stripe-webhooks.php'),
             ], 'lunar-api.stripe.config');
         }
     }
