@@ -2,6 +2,19 @@
 
 All notable changes to `lunar-api-stripe-adapter` will be documented in this file.
 
+## v0.8.0 - 2024-02-06
+
+### What's Changed
+
+* Updated to [Lunar API 0.8](https://github.com/dystcz/lunar-api)
+* Handle webhooks on queue by @theimerj in https://github.com/dystcz/lunar-api-stripe-adapter/pull/4
+
+#### Breaking ⚠️
+
+* `OrderPaid` event was renamed to `OrderPaymentSuccessful` https://github.com/dystcz/lunar-api-stripe-adapter/commit/d55de6298612cd9790f7f49b1dbc45934a77c7b9
+
+**Full Changelog**: https://github.com/dystcz/lunar-api-stripe-adapter/compare/0.7.1...0.8.0
+
 ## v0.7.2 - 2024-01-18
 
 ### What's Changed
