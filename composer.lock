@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0ddefd8fa6e3ff4b8f134aa5f8c7c7a0",
+    "content-hash": "b5612a497506c6422f57900aa48054ab",
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
@@ -994,7 +994,7 @@
         },
         {
             "name": "dystcz/lunar-api",
-            "version": "0.8.x-dev",
+            "version": "0.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dystcz/lunar-api.git",
@@ -1025,7 +1025,6 @@
                 "rector/rector": "^0.15.23",
                 "spatie/laravel-ray": "^1.32"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -1071,7 +1070,7 @@
             ],
             "support": {
                 "issues": "https://github.com/dystcz/lunar-api/issues",
-                "source": "https://github.com/dystcz/lunar-api/tree/0.8"
+                "source": "https://github.com/dystcz/lunar-api/tree/0.8.0"
             },
             "time": "2024-02-06T10:40:29+00:00"
         },
@@ -13506,9 +13505,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "dystcz/lunar-api": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

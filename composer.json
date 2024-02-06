@@ -20,7 +20,7 @@
     ],
     "require": {
         "php": "^8.2",
-        "dystcz/lunar-api": "0.8.x-dev",
+        "dystcz/lunar-api": "^0.8",
         "illuminate/contracts": "^10.0",
         "lunarphp/stripe": "^0.8.0",
         "spatie/laravel-stripe-webhooks": "^3.6"
