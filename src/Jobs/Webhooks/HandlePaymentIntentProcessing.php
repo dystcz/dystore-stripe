@@ -2,11 +2,14 @@
 
 namespace Dystcz\LunarApiStripeAdapter\Jobs\Webhooks;
 
+use Dystcz\LunarApi\Domain\Payments\Data\PaymentIntent;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Spatie\WebhookClient\Models\WebhookCall;
+use Stripe\Event;
+use Throwable;
 
 class HandlePaymentIntentProcessing implements ShouldQueue
 {
@@ -21,8 +24,11 @@ class HandlePaymentIntentProcessing implements ShouldQueue
 
     public function handle(): void
     {
-        // do your work here
-
-        // you can access the payload of the webhook call with `$this->webhookCall->payload`
+        try {
+            $event = Event::constructFrom($this->webhookCall->payload);
+            $paymentIntent = new PaymentIntent(intent: $event->data->object);
+        } catch (Throwable $e) {
+            $this->fail($e);
+        }
     }
 }

@@ -7,6 +7,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Spatie\WebhookClient\Models\WebhookCall;
+use Stripe\Event;
+use Throwable;
 
 class HandleOtherEvent implements ShouldQueue
 {
@@ -21,8 +23,10 @@ class HandleOtherEvent implements ShouldQueue
 
     public function handle(): void
     {
-        // do your work here
-
-        // you can access the payload of the webhook call with `$this->webhookCall->payload`
+        try {
+            $event = Event::constructFrom($this->webhookCall->payload);
+        } catch (Throwable $e) {
+            $this->fail($e);
+        }
     }
 }

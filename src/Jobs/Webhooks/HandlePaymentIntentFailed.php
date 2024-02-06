@@ -2,11 +2,18 @@
 
 namespace Dystcz\LunarApiStripeAdapter\Jobs\Webhooks;
 
+use Dystcz\LunarApi\Domain\Orders\Actions\FindOrderByIntent;
+use Dystcz\LunarApi\Domain\Orders\Events\OrderPaymentFailed;
+use Dystcz\LunarApi\Domain\Payments\Data\PaymentIntent;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\App;
+use Lunar\Stripe\Facades\StripeFacade;
 use Spatie\WebhookClient\Models\WebhookCall;
+use Stripe\Event;
+use Throwable;
 
 class HandlePaymentIntentFailed implements ShouldQueue
 {
@@ -21,8 +28,21 @@ class HandlePaymentIntentFailed implements ShouldQueue
 
     public function handle(): void
     {
-        // do your work here
+        try {
+            $event = Event::constructFrom($this->webhookCall->payload);
+            $paymentIntent = new PaymentIntent(intent: $event->data->object);
+        } catch (Throwable $e) {
+            $this->fail($e);
+        }
 
-        // you can access the payload of the webhook call with `$this->webhookCall->payload`
+        try {
+            $order = App::make(FindOrderByIntent::class)($paymentIntent);
+        } catch (Throwable $e) {
+            $this->fail($e);
+        }
+
+        $paymentAdapter = StripeFacade::getFacadeRoot();
+
+        OrderPaymentFailed::dispatch($order, $paymentAdapter, $paymentIntent);
     }
 }
