@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b9e92fb52c6cbbc3bf083a25a56323e6",
+    "content-hash": "0ddefd8fa6e3ff4b8f134aa5f8c7c7a0",
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
@@ -994,16 +994,16 @@
         },
         {
             "name": "dystcz/lunar-api",
-            "version": "dev-feature/update-payments",
+            "version": "0.8.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dystcz/lunar-api.git",
-                "reference": "bac2f55e69d923da616303904b098546f8da5dec"
+                "reference": "930c96fe6cb7b2bf74c6a524cd54a244cbc11898"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dystcz/lunar-api/zipball/bac2f55e69d923da616303904b098546f8da5dec",
-                "reference": "bac2f55e69d923da616303904b098546f8da5dec",
+                "url": "https://api.github.com/repos/dystcz/lunar-api/zipball/930c96fe6cb7b2bf74c6a524cd54a244cbc11898",
+                "reference": "930c96fe6cb7b2bf74c6a524cd54a244cbc11898",
                 "shasum": ""
             },
             "require": {
@@ -1011,7 +1011,7 @@
                 "laravel-json-api/hashids": "^2.0",
                 "laravel-json-api/laravel": "^3.0",
                 "laravel-json-api/non-eloquent": "^3.0",
-                "lunarphp/lunar": "^0.7",
+                "lunarphp/lunar": "^0.8",
                 "php": "^8.2"
             },
             "require-dev": {
@@ -1025,6 +1025,7 @@
                 "rector/rector": "^0.15.23",
                 "spatie/laravel-ray": "^1.32"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -1070,9 +1071,9 @@
             ],
             "support": {
                 "issues": "https://github.com/dystcz/lunar-api/issues",
-                "source": "https://github.com/dystcz/lunar-api/tree/feature/update-payments"
+                "source": "https://github.com/dystcz/lunar-api/tree/0.8"
             },
-            "time": "2024-02-06T00:34:19+00:00"
+            "time": "2024-02-06T10:40:29+00:00"
         },
         {
             "name": "egulias/email-validator",
@@ -3695,16 +3696,16 @@
         },
         {
             "name": "lunarphp/lunar",
-            "version": "0.7.6",
+            "version": "0.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lunarphp/lunar.git",
-                "reference": "65a84acc6806ef402be0a8a675fb93a1aa067f3c"
+                "reference": "cbe131e983700f582f24ab267387f8a92f9c63d1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lunarphp/lunar/zipball/65a84acc6806ef402be0a8a675fb93a1aa067f3c",
-                "reference": "65a84acc6806ef402be0a8a675fb93a1aa067f3c",
+                "url": "https://api.github.com/repos/lunarphp/lunar/zipball/cbe131e983700f582f24ab267387f8a92f9c63d1",
+                "reference": "cbe131e983700f582f24ab267387f8a92f9c63d1",
                 "shasum": ""
             },
             "require": {
@@ -3788,7 +3789,7 @@
             "description": "Lunar Monorepo",
             "support": {
                 "issues": "https://github.com/lunarphp/lunar/issues",
-                "source": "https://github.com/lunarphp/lunar/tree/0.7.6"
+                "source": "https://github.com/lunarphp/lunar/tree/0.8.0"
             },
             "funding": [
                 {
@@ -3796,26 +3797,26 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-01-31T16:14:53+00:00"
+            "time": "2024-01-31T16:41:34+00:00"
         },
         {
             "name": "lunarphp/stripe",
-            "version": "0.7.0",
+            "version": "0.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lunarphp/stripe.git",
-                "reference": "572854b9659138e314d2ebd89aab0653c90abb05"
+                "reference": "5a8cbd251ddfbdf469ba6475c80336cd9142f6b0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lunarphp/stripe/zipball/572854b9659138e314d2ebd89aab0653c90abb05",
-                "reference": "572854b9659138e314d2ebd89aab0653c90abb05",
+                "url": "https://api.github.com/repos/lunarphp/stripe/zipball/5a8cbd251ddfbdf469ba6475c80336cd9142f6b0",
+                "reference": "5a8cbd251ddfbdf469ba6475c80336cd9142f6b0",
                 "shasum": ""
             },
             "require": {
                 "laravel/pint": "^1.13",
                 "livewire/livewire": "^2.0",
-                "lunarphp/lunar": "^0.7",
+                "lunarphp/lunar": "^0.8",
                 "php": "^8.0",
                 "stripe/stripe-php": "^7.114"
             },
@@ -3864,9 +3865,9 @@
                 "stripe"
             ],
             "support": {
-                "source": "https://github.com/lunarphp/stripe/tree/0.7.0"
+                "source": "https://github.com/lunarphp/stripe/tree/0.8.0"
             },
-            "time": "2023-11-03T14:12:29+00:00"
+            "time": "2024-02-01T10:04:19+00:00"
         },
         {
             "name": "maennchen/zipstream-php",
@@ -13503,14 +13504,7 @@
             "time": "2023-05-30T22:51:52+00:00"
         }
     ],
-    "aliases": [
-        {
-            "package": "dystcz/lunar-api",
-            "version": "dev-feature/update-payments",
-            "alias": "0.7",
-            "alias_normalized": "0.7.0.0"
-        }
-    ],
+    "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
         "dystcz/lunar-api": 20
