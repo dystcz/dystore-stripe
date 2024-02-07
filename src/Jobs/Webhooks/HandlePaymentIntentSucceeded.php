@@ -40,6 +40,6 @@ class HandlePaymentIntentSucceeded implements ShouldQueue
             $this->fail($e);
         }
 
-        App::make(AuthorizeStripePayment::class)($order, $paymentIntent);
+        App::make(AuthorizeStripePayment::class)($order, $order->cart, $paymentIntent);
     }
 }
