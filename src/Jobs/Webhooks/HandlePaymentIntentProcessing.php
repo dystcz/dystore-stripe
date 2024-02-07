@@ -2,33 +2,19 @@
 
 namespace Dystcz\LunarApiStripeAdapter\Jobs\Webhooks;
 
-use Dystcz\LunarApi\Domain\Payments\Data\PaymentIntent;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Spatie\WebhookClient\Models\WebhookCall;
-use Stripe\Event;
-use Throwable;
+use Illuminate\Support\Facades\Config;
 
-class HandlePaymentIntentProcessing implements ShouldQueue
+class HandlePaymentIntentProcessing extends WebhookHandler
 {
-    use InteractsWithQueue, Queueable, SerializesModels;
-
-    public WebhookCall $webhookCall;
-
-    public function __construct(WebhookCall $webhookCall)
-    {
-        $this->webhookCall = $webhookCall;
-    }
-
+    /**
+     * Handle payment intent processing.
+     */
     public function handle(): void
     {
-        try {
-            $event = Event::constructFrom($this->webhookCall->payload);
-            $paymentIntent = new PaymentIntent(intent: $event->data->object);
-        } catch (Throwable $e) {
-            $this->fail($e);
-        }
+        // $event = $this->constructStripeEvent();
+        // $paymentIntent = $this->getPaymentIntentFromEvent($event);
+        // $order = $this->findOrderByIntent($paymentIntent);
+        //
+        // $paymentAdapter = $this->register->get(Config::get('lunar-api.stripe.driver', 'stripe'));
     }
 }

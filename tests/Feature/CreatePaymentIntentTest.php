@@ -26,7 +26,7 @@ beforeEach(function () {
     $this->cart = $cart;
 });
 
-test('a payment intent can be created', function (string $paymentMethod) {
+test('can create a payment intent', function (string $paymentMethod) {
     /** @var TestCase $this */
     $url = URL::signedRoute(
         'v1.orders.createPaymentIntent',
@@ -47,6 +47,44 @@ test('a payment intent can be created', function (string $paymentMethod) {
 
     $response->assertSuccessful();
 
+    // Stores the payment intent in the cart
     expect($response->json('meta.payment_intent.id'))
         ->toBe($this->cart->fresh()->meta['payment_intent']);
-})->with(['stripe']);
+
+    // Stores the payment intent in the order
+    expect($response->json('meta.payment_intent.id'))
+        ->toBe($this->order->fresh()->meta['payment_intent']);
+
+})->group('payments-intents')->with(['stripe']);
+
+it('creates a transaction when creating a payement intent', function (string $paymentMethod) {
+    /** @var TestCase $this */
+    $url = URL::signedRoute(
+        'v1.orders.createPaymentIntent',
+        ['order' => $this->order->getRouteKey()],
+    );
+
+    $response = $this
+        ->jsonApi()
+        ->expects('orders')
+        ->withData([
+            'type' => 'orders',
+            'id' => (string) $this->order->getRouteKey(),
+            'attributes' => [
+                'payment_method' => $paymentMethod,
+            ],
+        ])
+        ->post($url);
+
+    $response->assertSuccessful();
+
+    $this->assertDatabaseHas('transactions', [
+        'order_id' => $this->order->getRouteKey(),
+        'success' => true,
+        'type' => 'intent',
+        'driver' => 'stripe',
+        'amount' => $this->order->total,
+        'reference' => $response->json('meta.payment_intent.id'),
+    ]);
+
+})->group('payments-intents')->with(['stripe'])->todo();

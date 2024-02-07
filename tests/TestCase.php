@@ -6,11 +6,13 @@ use Dystcz\LunarApiStripeAdapter\Tests\Stubs\Carts\Modifiers\TestShippingModifie
 use Dystcz\LunarApiStripeAdapter\Tests\Stubs\Lunar\TestTaxDriver;
 use Dystcz\LunarApiStripeAdapter\Tests\Stubs\Lunar\TestUrlGenerator;
 use Dystcz\LunarApiStripeAdapter\Tests\Stubs\Users\User;
+use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use LaravelJsonApi\Testing\MakesJsonApiRequests;
+use LaravelJsonApi\Testing\TestExceptionHandler;
 use Lunar\Base\ShippingModifiers;
 use Lunar\Facades\Taxes;
 use Lunar\Models\Channel;
@@ -20,7 +22,7 @@ use Lunar\Models\CustomerGroup;
 use Lunar\Models\TaxClass;
 use Orchestra\Testbench\TestCase as Orchestra;
 
-class TestCase extends Orchestra
+abstract class TestCase extends Orchestra
 {
     use MakesJsonApiRequests;
 
@@ -28,9 +30,10 @@ class TestCase extends Orchestra
     {
         parent::setUp();
 
-        Taxes::extend('test', function ($app) {
-            return $app->make(TestTaxDriver::class);
-        });
+        Taxes::extend(
+            'test',
+            fn (Application $app) => $app->make(TestTaxDriver::class),
+        );
 
         Currency::factory()->create([
             'code' => 'EUR',
@@ -62,13 +65,17 @@ class TestCase extends Orchestra
         activity()->disableLogging();
     }
 
+    /**
+     * Get package providers.
+     *
+     * @param  \Illuminate\Foundation\Application  $app
+     * @return array<int, class-string<\Illuminate\Support\ServiceProvider>>
+     */
     protected function getPackageProviders($app): array
     {
         return [
             // Ray
             \Spatie\LaravelRay\RayServiceProvider::class,
-            \Spatie\WebhookClient\WebhookClientServiceProvider::class,
-            \Spatie\StripeWebhooks\StripeWebhooksServiceProvider::class,
 
             // Laravel JsonApi
             \LaravelJsonApi\Encoder\Neomerx\ServiceProvider::class,
@@ -92,6 +99,10 @@ class TestCase extends Orchestra
             // Lunar API
             \Dystcz\LunarApi\LunarApiServiceProvider::class,
             \Dystcz\LunarApi\JsonApiServiceProvider::class,
+
+            // Stripe webhooks
+            \Spatie\WebhookClient\WebhookClientServiceProvider::class,
+            \Spatie\StripeWebhooks\StripeWebhooksServiceProvider::class,
 
             // Lunar API Stripe Adapter
             \Dystcz\LunarApiStripeAdapter\LunarApiStripeAdapterServiceProvider::class,
@@ -122,7 +133,6 @@ class TestCase extends Orchestra
          */
         Config::set('database.default', 'sqlite');
         Config::set('database.migrations', 'migrations');
-
         Config::set('database.connections.sqlite', [
             'driver' => 'sqlite',
             'database' => ':memory:',
@@ -174,5 +184,16 @@ class TestCase extends Orchestra
     {
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         $this->loadLaravelMigrations();
+    }
+
+    /**
+     * Resolve application HTTP exception handler implementation.
+     */
+    protected function resolveApplicationExceptionHandler($app): void
+    {
+        $app->singleton(
+            ExceptionHandler::class,
+            TestExceptionHandler::class
+        );
     }
 }
