@@ -18,8 +18,8 @@ class AuthorizeStripePayment
             ->order($order)
             ->cart($cart)
             ->withData([
-                'payment_intent_client_secret' => $intent->client_secret,
-                'payment_intent' => $intent->id,
+                'payment_intent_client_secret' => $intent->getClientSecret(),
+                'payment_intent' => $intent->getId(),
             ])
             ->authorize();
 
