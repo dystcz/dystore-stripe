@@ -25,6 +25,9 @@ class HandlePaymentIntentSucceeded implements ShouldQueue
         $this->webhookCall = $webhookCall;
     }
 
+    /**
+     * Handle successful payment intent.
+     */
     public function handle(): void
     {
         try {

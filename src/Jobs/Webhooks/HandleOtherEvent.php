@@ -21,6 +21,9 @@ class HandleOtherEvent implements ShouldQueue
         $this->webhookCall = $webhookCall;
     }
 
+    /**
+     * Handle other events.
+     */
     public function handle(): void
     {
         try {

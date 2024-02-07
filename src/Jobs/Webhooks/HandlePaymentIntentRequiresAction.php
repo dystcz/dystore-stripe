@@ -22,6 +22,9 @@ class HandlePaymentIntentRequiresAction implements ShouldQueue
         $this->webhookCall = $webhookCall;
     }
 
+    /**
+     * Handle payment intent requires action.
+     */
     public function handle(): void
     {
         try {

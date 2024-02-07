@@ -19,10 +19,11 @@ class HandleChargeableSource implements ShouldQueue
         $this->webhookCall = $webhookCall;
     }
 
+    /**
+     * Handle chargeable source.
+     */
     public function handle(): void
     {
-        // do your work here
-
-        // you can access the payload of the webhook call with `$this->webhookCall->payload`
+        //
     }
 }

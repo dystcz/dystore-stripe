@@ -19,10 +19,11 @@ class HandleChargeFailed implements ShouldQueue
         $this->webhookCall = $webhookCall;
     }
 
+    /**
+     * Handle failed charge.
+     */
     public function handle(): void
     {
-        // do your work here
-
-        // you can access the payload of the webhook call with `$this->webhookCall->payload`
+        //
     }
 }
