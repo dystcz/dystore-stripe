@@ -2,28 +2,13 @@
 
 namespace Dystcz\LunarApiStripeAdapter\Jobs\Webhooks;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Spatie\WebhookClient\Models\WebhookCall;
-
-class HandleChargeableSource implements ShouldQueue
+class HandleChargeableSource extends WebhookHandler
 {
-    use InteractsWithQueue, Queueable, SerializesModels;
-
-    public WebhookCall $webhookCall;
-
-    public function __construct(WebhookCall $webhookCall)
-    {
-        $this->webhookCall = $webhookCall;
-    }
-
     /**
-     * Handle chargeable source.
+     * Handle payment intent processing.
      */
     public function handle(): void
     {
-        //
+        // $event = $this->constructStripeEvent();
     }
 }
