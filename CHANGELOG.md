@@ -2,6 +2,15 @@
 
 All notable changes to `lunar-api-stripe-adapter` will be documented in this file.
 
+## v0.8.1 - 2024-02-07
+
+### What's Changed
+
+* Stripe webhooks on queue by @theimerj in https://github.com/dystcz/lunar-api-stripe-adapter/pull/5
+* Update tests
+
+**Full Changelog**: https://github.com/dystcz/lunar-api-stripe-adapter/compare/0.8.0...0.8.1
+
 ## v0.8.0 - 2024-02-06
 
 ### What's Changed
