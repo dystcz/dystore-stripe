@@ -2,8 +2,6 @@
 
 namespace Dystcz\LunarApiStripeAdapter\Jobs\Webhooks;
 
-use Illuminate\Support\Facades\Config;
-
 class HandlePaymentIntentCreated extends WebhookHandler
 {
     /**
@@ -14,7 +12,6 @@ class HandlePaymentIntentCreated extends WebhookHandler
         // $event = $this->constructStripeEvent();
         // $paymentIntent = $this->getPaymentIntentFromEvent($event);
         // $order = $this->findOrderByIntent($paymentIntent);
-        //
-        // $paymentAdapter = $this->register->get(Config::get('lunar-api.stripe.driver', 'stripe'));
+        // $paymentAdapter = $this->getPaymentAdapter();
     }
 }

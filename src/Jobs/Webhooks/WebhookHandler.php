@@ -27,7 +27,6 @@ abstract class WebhookHandler implements ShouldQueue
 
     public function __construct(
         WebhookCall $webhookCall,
-        protected PaymentAdaptersRegister $register
     ) {
         $this->webhookCall = $webhookCall;
     }
@@ -64,7 +63,9 @@ abstract class WebhookHandler implements ShouldQueue
      */
     protected function getPaymentAdapter(): PaymentAdapter
     {
-        return $this->register->get(Config::get('lunar-api.stripe.driver', 'stripe'));
+        $register = App::make(PaymentAdaptersRegister::class);
+
+        return $register->get(Config::get('lunar-api.stripe.driver', 'stripe'));
     }
 
     /**
