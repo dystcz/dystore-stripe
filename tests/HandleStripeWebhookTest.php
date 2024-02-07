@@ -2,9 +2,9 @@
 
 use Dystcz\LunarApi\Domain\Carts\Events\CartCreated;
 use Dystcz\LunarApi\Domain\Carts\Models\Cart;
-use Dystcz\LunarApi\Domain\Orders\Events\OrderPaid;
 use Dystcz\LunarApi\Domain\Orders\Events\OrderPaymentCanceled;
 use Dystcz\LunarApi\Domain\Orders\Events\OrderPaymentFailed;
+use Dystcz\LunarApi\Domain\Orders\Events\OrderPaymentSuccessful;
 use Dystcz\LunarApiStripeAdapter\Jobs\Webhooks\HandlePaymentIntentSucceeded;
 use Dystcz\LunarApiStripeAdapter\StripePaymentAdapter;
 use Dystcz\LunarApiStripeAdapter\Tests\TestCase;
@@ -75,7 +75,7 @@ it('can handle payment_intent.succeeded event', function () {
     $response->assertSuccessful();
 
     // Queue::assertPushed(HandlePaymentIntentSucceeded::class);
-    // Event::assertDispatched(OrderPaid::class);
+    // Event::assertDispatched(OrderPaymentSuccessful::class);
 });
 
 it('can handle payment_intent.cancelled event', function () {

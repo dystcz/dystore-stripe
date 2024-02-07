@@ -2,7 +2,7 @@
 
 namespace Dystcz\LunarApiStripeAdapter\Actions;
 
-use Dystcz\LunarApi\Domain\Orders\Events\OrderPaid;
+use Dystcz\LunarApi\Domain\Orders\Events\OrderPaymentSuccessful;
 use Dystcz\LunarApi\Domain\Payments\PaymentAdapters\PaymentIntent;
 use Illuminate\Support\Facades\Log;
 use Lunar\Base\DataTransferObjects\PaymentAuthorize;
@@ -32,6 +32,6 @@ class AuthorizeStripePayment
             return;
         }
 
-        OrderPaid::dispatch($order);
+        OrderPaymentSuccessful::dispatch($order);
     }
 }
