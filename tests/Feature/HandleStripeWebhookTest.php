@@ -53,7 +53,7 @@ it('can handle payment_intent.succeeded event', function () {
     Event::fake();
     Queue::fake();
 
-    $data = json_decode(file_get_contents(__DIR__.'/Stubs/Stripe/payment_intent.succeeded.json'), true);
+    $data = json_decode(file_get_contents(__DIR__.'/../Stubs/Stripe/payment_intent.succeeded.json'), true);
 
     $data['data']['object']['id'] = $this->cart->meta['payment_intent'];
 
@@ -76,14 +76,14 @@ it('can handle payment_intent.succeeded event', function () {
 
     // Queue::assertPushed(HandlePaymentIntentSucceeded::class);
     // Event::assertDispatched(OrderPaymentSuccessful::class);
-});
+})->group('webhooks');
 
 it('can handle payment_intent.cancelled event', function () {
     /** @var TestCase $this */
     Event::fake();
     Queue::fake();
 
-    $data = json_decode(file_get_contents(__DIR__.'/Stubs/Stripe/payment_intent.canceled.json'), true);
+    $data = json_decode(file_get_contents(__DIR__.'/../Stubs/Stripe/payment_intent.canceled.json'), true);
 
     $paymentIntentId = $this->cart->meta['payment_intent'];
     $data['data']['object']['id'] = $paymentIntentId;
@@ -98,14 +98,14 @@ it('can handle payment_intent.cancelled event', function () {
     $response->assertSuccessful();
 
     // Event::assertDispatched(OrderPaymentCanceled::class);
-});
+})->group('webhooks');
 
 it('can handle payment_intent.failed event', function () {
     /** @var TestCase $this */
     Event::fake();
     Queue::fake();
 
-    $data = json_decode(file_get_contents(__DIR__.'/Stubs/Stripe/payment_intent.payment_failed.json'), true);
+    $data = json_decode(file_get_contents(__DIR__.'/../Stubs/Stripe/payment_intent.payment_failed.json'), true);
 
     $data['data']['object']['id'] = $this->cart->meta['payment_intent'];
 
@@ -119,14 +119,14 @@ it('can handle payment_intent.failed event', function () {
     $response->assertSuccessful();
 
     // Event::assertDispatched(OrderPaymentFailed::class);
-});
+})->group('webhooks');
 
 it('can handle any other event', function () {
     /** @var TestCase $this */
     Event::fake();
     Queue::fake();
 
-    $data = json_decode(file_get_contents(__DIR__.'/Stubs/Stripe/charge.succeeded.json'), true);
+    $data = json_decode(file_get_contents(__DIR__.'/../Stubs/Stripe/charge.succeeded.json'), true);
 
     $data['data']['object']['id'] = $this->cart->meta['payment_intent'];
 
@@ -138,4 +138,4 @@ it('can handle any other event', function () {
         );
 
     $response->assertSuccessful();
-});
+})->group('webhooks');
