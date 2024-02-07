@@ -5,12 +5,13 @@ namespace Dystcz\LunarApiStripeAdapter\Jobs\Webhooks;
 use Dystcz\LunarApi\Domain\Orders\Actions\FindOrderByIntent;
 use Dystcz\LunarApi\Domain\Orders\Events\OrderPaymentFailed;
 use Dystcz\LunarApi\Domain\Payments\Data\PaymentIntent;
+use Dystcz\LunarApi\Domain\Payments\PaymentAdapters\PaymentAdaptersRegister;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
-use Lunar\Stripe\Facades\StripeFacade;
+use Illuminate\Support\Facades\Config;
 use Spatie\WebhookClient\Models\WebhookCall;
 use Stripe\Event;
 use Throwable;
@@ -21,11 +22,16 @@ class HandlePaymentIntentFailed implements ShouldQueue
 
     public WebhookCall $webhookCall;
 
-    public function __construct(WebhookCall $webhookCall)
-    {
+    public function __construct(
+        WebhookCall $webhookCall,
+        protected PaymentAdaptersRegister $register
+    ) {
         $this->webhookCall = $webhookCall;
     }
 
+    /**
+     * Handle failed payment intent.
+     */
     public function handle(): void
     {
         try {
@@ -41,7 +47,7 @@ class HandlePaymentIntentFailed implements ShouldQueue
             $this->fail($e);
         }
 
-        $paymentAdapter = StripeFacade::getFacadeRoot();
+        $paymentAdapter = $this->register->get(Config::get('lunar-api.stripe.driver', 'stripe'));
 
         OrderPaymentFailed::dispatch($order, $paymentAdapter, $paymentIntent);
     }
