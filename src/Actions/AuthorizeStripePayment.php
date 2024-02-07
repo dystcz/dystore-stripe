@@ -4,7 +4,6 @@ namespace Dystcz\LunarApiStripeAdapter\Actions;
 
 use Dystcz\LunarApi\Domain\Orders\Events\OrderPaymentSuccessful;
 use Dystcz\LunarApi\Domain\Payments\Contracts\PaymentIntent;
-use Illuminate\Support\Facades\Log;
 use Lunar\Base\DataTransferObjects\PaymentAuthorize;
 use Lunar\Facades\Payments;
 use Lunar\Models\Cart;
@@ -14,8 +13,6 @@ class AuthorizeStripePayment
 {
     public function __invoke(Order $order, Cart $cart, PaymentIntent $intent): void
     {
-        Log::info('Payment intent succeeded: '.$intent->id);
-
         /** @var PaymentAuthorize $payment */
         $payment = Payments::driver('stripe')
             ->order($order)
