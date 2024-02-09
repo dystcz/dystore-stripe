@@ -2,6 +2,14 @@
 
 All notable changes to `lunar-api-stripe-adapter` will be documented in this file.
 
+## v0.8.2 - 2024-02-09
+
+### What's Changed
+
+* Comply with Lunar API 0.8.1 by @theimerj in https://github.com/dystcz/lunar-api-stripe-adapter/pull/6
+
+**Full Changelog**: https://github.com/dystcz/lunar-api-stripe-adapter/compare/0.8.1...0.8.2
+
 ## v0.8.1 - 2024-02-07
 
 ### What's Changed
