@@ -62,7 +62,7 @@ class StripePaymentAdapter extends PaymentAdapter
     /**
      * Create payment intent.
      */
-    public function createIntent(Cart $cart, array $meta = []): PaymentIntentContract
+    public function createIntent(Cart $cart, array $meta = [], ?int $amount = null): PaymentIntentContract
     {
         $cart = $this->updateCartMeta($cart, $meta);
 
