@@ -2,6 +2,14 @@
 
 All notable changes to `lunar-api-stripe-adapter` will be documented in this file.
 
+## v0.8.3 - 2024-02-16
+
+### What's Changed
+
+* Find order redundancy by @theimerj in https://github.com/dystcz/lunar-api-stripe-adapter/pull/7
+
+**Full Changelog**: https://github.com/dystcz/lunar-api-stripe-adapter/compare/0.8.2...0.8.3
+
 ## v0.8.2 - 2024-02-09
 
 ### What's Changed
