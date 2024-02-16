@@ -14,7 +14,7 @@ class HandlePaymentIntentSucceeded extends WebhookHandler
     {
         $event = $this->constructStripeEvent();
         $paymentIntent = $this->getPaymentIntentFromEvent($event);
-        $order = $this->findOrderByIntent($paymentIntent);
+        $order = $this->findOrder($paymentIntent);
 
         App::make(AuthorizeStripePayment::class)($order, $order->cart, $paymentIntent);
     }

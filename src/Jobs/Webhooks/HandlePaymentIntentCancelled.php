@@ -13,7 +13,7 @@ class HandlePaymentIntentCancelled extends WebhookHandler
     {
         $event = $this->constructStripeEvent();
         $paymentIntent = $this->getPaymentIntentFromEvent($event);
-        $order = $this->findOrderByIntent($paymentIntent);
+        $order = $this->findOrder($paymentIntent);
         $paymentAdapter = $this->getPaymentAdapter();
 
         OrderPaymentCanceled::dispatch($order, $paymentAdapter, $paymentIntent);
