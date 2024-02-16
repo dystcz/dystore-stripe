@@ -2,7 +2,9 @@
 
 namespace Dystcz\LunarApiStripeAdapter\Jobs\Webhooks;
 
+use Dystcz\LunarApi\Domain\Orders\Actions\FindOrderByCartIntent;
 use Dystcz\LunarApi\Domain\Orders\Actions\FindOrderByIntent;
+use Dystcz\LunarApi\Domain\Orders\Actions\FindOrderByTransaction;
 use Dystcz\LunarApi\Domain\Payments\Contracts\PaymentIntent as PaymentIntentContract;
 use Dystcz\LunarApi\Domain\Payments\Data\PaymentIntent;
 use Dystcz\LunarApi\Domain\Payments\PaymentAdapters\PaymentAdapter;
@@ -73,10 +75,12 @@ abstract class WebhookHandler implements ShouldQueue
      *
      * @throws ModelNotFoundException
      */
-    protected function findOrderByIntent(PaymentIntentContract $paymentIntent): Order
+    protected function findOrder(PaymentIntentContract $paymentIntent): Order
     {
         try {
-            $order = App::make(FindOrderByIntent::class)($paymentIntent);
+            $order = App::make(FindOrderByIntent::class)($paymentIntent)
+                ?? App::make(FindOrderByTransaction::class)($paymentIntent)
+                ?? App::make(FindOrderByCartIntent::class)($paymentIntent);
         } catch (Throwable $e) {
             $this->fail($e);
         }

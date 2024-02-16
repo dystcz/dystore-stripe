@@ -13,7 +13,7 @@ class HandlePaymentIntentFailed extends WebhookHandler
     {
         $event = $this->constructStripeEvent();
         $paymentIntent = $this->getPaymentIntentFromEvent($event);
-        $order = $this->findOrderByIntent($paymentIntent);
+        $order = $this->findOrder($paymentIntent);
         $paymentAdapter = $this->getPaymentAdapter();
 
         OrderPaymentFailed::dispatch($order, $paymentAdapter, $paymentIntent);
