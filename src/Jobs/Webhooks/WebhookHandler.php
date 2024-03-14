@@ -78,13 +78,29 @@ abstract class WebhookHandler implements ShouldQueue
     protected function findOrder(PaymentIntentContract $paymentIntent): Order
     {
         try {
-            $order = App::make(FindOrderByIntent::class)($paymentIntent)
-                ?? App::make(FindOrderByTransaction::class)($paymentIntent)
-                ?? App::make(FindOrderByCartIntent::class)($paymentIntent);
+            $order = App::make(FindOrderByIntent::class)($paymentIntent);
+
+            return $order;
         } catch (Throwable $e) {
             $this->fail($e);
         }
 
-        return $order;
+        try {
+            $order = App::make(FindOrderByTransaction::class)($paymentIntent);
+
+            return $order;
+        } catch (Throwable $e) {
+            $this->fail($e);
+        }
+
+        try {
+            $order = App::make(FindOrderByCartIntent::class)($paymentIntent);
+
+            return $order;
+        } catch (Throwable $e) {
+            $this->fail($e);
+        }
+
+        $this->fail(new ModelNotFoundException('Order not found.'));
     }
 }
