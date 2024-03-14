@@ -48,7 +48,6 @@ beforeEach(function () {
 
     $this->cart = $cart;
     $this->order = $order;
-
 });
 
 it('can handle payment_intent.succeeded event', function () {
