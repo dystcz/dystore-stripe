@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\URL;
 use Lunar\Facades\CartSession;
+use Lunar\Models\Transaction;
 
 uses(TestCase::class, RefreshDatabase::class);
 
@@ -55,7 +56,7 @@ test('can create a payment intent', function (string $paymentMethod) {
     expect($response->json('meta.payment_intent.id'))
         ->toBe($this->order->fresh()->meta['payment_intent']);
 
-})->group('payments-intents')->with(['stripe']);
+})->group('payment-intents')->with(['stripe']);
 
 it('creates a transaction when creating a payement intent', function (string $paymentMethod) {
     /** @var TestCase $this */
@@ -78,7 +79,7 @@ it('creates a transaction when creating a payement intent', function (string $pa
 
     $response->assertSuccessful();
 
-    $this->assertDatabaseHas('transactions', [
+    $this->assertDatabaseHas((new Transaction)->getTable(), [
         'order_id' => $this->order->getRouteKey(),
         'success' => true,
         'type' => 'intent',
@@ -87,4 +88,4 @@ it('creates a transaction when creating a payement intent', function (string $pa
         'reference' => $response->json('meta.payment_intent.id'),
     ]);
 
-})->group('payments-intents')->with(['stripe'])->todo();
+})->group('payment-intents')->with(['stripe']);
