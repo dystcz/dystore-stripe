@@ -5,7 +5,6 @@ namespace Dystcz\LunarApiStripeAdapter\Tests;
 use Dystcz\LunarApiStripeAdapter\Tests\Stubs\Carts\Modifiers\TestShippingModifier;
 use Dystcz\LunarApiStripeAdapter\Tests\Stubs\Lunar\TestTaxDriver;
 use Dystcz\LunarApiStripeAdapter\Tests\Stubs\Lunar\TestUrlGenerator;
-use Dystcz\LunarApiStripeAdapter\Tests\Stubs\Users\User;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables;
@@ -15,11 +14,7 @@ use LaravelJsonApi\Testing\MakesJsonApiRequests;
 use LaravelJsonApi\Testing\TestExceptionHandler;
 use Lunar\Base\ShippingModifiers;
 use Lunar\Facades\Taxes;
-use Lunar\Models\Channel;
-use Lunar\Models\Country;
 use Lunar\Models\Currency;
-use Lunar\Models\CustomerGroup;
-use Lunar\Models\TaxClass;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 abstract class TestCase extends Orchestra
@@ -30,6 +25,13 @@ abstract class TestCase extends Orchestra
     {
         parent::setUp();
 
+        $this->setUpDatabase();
+
+        Config::set('auth.providers.users', [
+            'driver' => 'eloquent',
+            'model' => \Dystcz\LunarApiStripeAdapter\Tests\Stubs\Users\User::class,
+        ]);
+
         Taxes::extend(
             'test',
             fn (Application $app) => $app->make(TestTaxDriver::class),
@@ -39,26 +41,6 @@ abstract class TestCase extends Orchestra
             'code' => 'EUR',
             'decimal_places' => 2,
         ]);
-
-        Country::factory()->create([
-            'name' => 'United Kingdom',
-            'iso3' => 'GBR',
-            'iso2' => 'GB',
-            'phonecode' => '+44',
-            'capital' => 'London',
-            'currency' => 'GBP',
-            'native' => 'English',
-        ]);
-
-        Channel::factory()->create([
-            'default' => true,
-        ]);
-
-        CustomerGroup::factory()->create([
-            'default' => true,
-        ]);
-
-        TaxClass::factory()->create();
 
         App::get(ShippingModifiers::class)->add(TestShippingModifier::class);
 
@@ -116,11 +98,6 @@ abstract class TestCase extends Orchestra
     {
         $app->useEnvironmentPath(__DIR__.'/..');
         $app->bootstrapWith([LoadEnvironmentVariables::class]);
-
-        Config::set('auth.providers.users', [
-            'driver' => 'eloquent',
-            'model' => User::class,
-        ]);
 
         /**
          * Lunar configuration
@@ -182,8 +159,17 @@ abstract class TestCase extends Orchestra
      */
     protected function defineDatabaseMigrations(): void
     {
-        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         $this->loadLaravelMigrations();
+    }
+
+    /**
+     * Set up the database.
+     */
+    protected function setUpDatabase()
+    {
+        $migration = include __DIR__.'/../vendor/spatie/laravel-webhook-client/database/migrations/create_webhook_calls_table.php.stub';
+
+        $migration->up();
     }
 
     /**
