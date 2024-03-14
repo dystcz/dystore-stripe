@@ -10,6 +10,7 @@ use Dystcz\LunarApiStripeAdapter\StripePaymentAdapter;
 use Dystcz\LunarApiStripeAdapter\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
 use Lunar\Stripe\Concerns\ConstructsWebhookEvent;
@@ -20,6 +21,8 @@ uses(TestCase::class, RefreshDatabase::class);
 beforeEach(function () {
     /** @var TestCase $this */
     Event::fake(CartCreated::class);
+
+    Config::set('lunar-api.stripe.automatic_payment_methods', false);
 
     /** @var Cart $cart */
     $cart = Cart::factory()
