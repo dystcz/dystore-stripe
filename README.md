@@ -21,17 +21,6 @@ You can publish the config file with:
 php artisan vendor:publish --provider="Dystcz\LunarApiStripeAdapter\LunarApiStripeAdapterServiceProvider" --tag="config"
 ```
 
-This is the contents of the published config file:
-
-```php
-return [
-    'driver' => 'stripe',
-    'type' => 'card',
-];
-```
-
-## Usage
-
 ```php
 // Create a payment intent
 App::make(StripePaymentAdapter::class)->createIntent($cart)
