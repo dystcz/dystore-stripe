@@ -4,7 +4,7 @@ namespace Dystcz\LunarApiStripeAdapter\Jobs\Webhooks;
 
 use Dystcz\LunarApi\Domain\Orders\Events\OrderPaymentCanceled;
 
-class HandlePaymentIntentCancelled extends WebhookHandler
+class HandlePaymentIntentCanceled extends WebhookHandler
 {
     /**
      * Handle failed payment intent.
