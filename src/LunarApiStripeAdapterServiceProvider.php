@@ -23,10 +23,13 @@ class LunarApiStripeAdapterServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->app->singleton(
-            'gc:stripe',
-            fn (Application $app) => $app->make(StripeManager::class),
-        );
+        // Testing
+        if ($this->app->environment('testing')) {
+            $this->app->singleton(
+                'gc:stripe',
+                fn (Application $app) => $app->make(StripeManager::class),
+            );
+        }
 
         $this->loadRoutesFrom(__DIR__.'/../routes/webhooks.php');
 
