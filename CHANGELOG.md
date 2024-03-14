@@ -2,6 +2,14 @@
 
 All notable changes to `lunar-api-stripe-adapter` will be documented in this file.
 
+## v0.8.4 - 2024-03-14
+
+### What's Changed
+
+* Fix payment intent failed webhook by @theimerj in https://github.com/dystcz/lunar-api-stripe-adapter/pull/8
+
+**Full Changelog**: https://github.com/dystcz/lunar-api-stripe-adapter/compare/0.8.3...0.8.4
+
 ## v0.8.3 - 2024-02-16
 
 ### What's Changed
