@@ -22,18 +22,4 @@ return [
     |
     */
     'type' => 'stripe',
-
-    /**
-     * Automatic payment methods
-     *
-     * Enable automatic payment methods.
-     */
-    'automatic_payment_methods' => true,
-
-    /**
-     * Payment method types
-     *
-     * The payment method types that the payment intent will accept.
-     */
-    'payment_method_types' => ['card'],
 ];

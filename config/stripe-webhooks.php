@@ -25,7 +25,7 @@ return [
         'payment_intent_created' => \Dystcz\LunarApiStripeAdapter\Jobs\Webhooks\HandlePaymentIntentCreated::class,
         'payment_intent_succeeded' => \Dystcz\LunarApiStripeAdapter\Jobs\Webhooks\HandlePaymentIntentSucceeded::class,
         'payment_intent_payment_failed' => \Dystcz\LunarApiStripeAdapter\Jobs\Webhooks\HandlePaymentIntentFailed::class,
-        'payment_intent_cancelled' => \Dystcz\LunarApiStripeAdapter\Jobs\Webhooks\HandlePaymentIntentCancelled::class,
+        'payment_intent_canceled' => \Dystcz\LunarApiStripeAdapter\Jobs\Webhooks\HandlePaymentIntentCanceled::class,
         // 'payment_intent_processing' => \Dystcz\LunarApiStripeAdapter\Jobs\Webhooks\HandlePaymentIntentProcessing::class,
         // 'payment_intent_requires_action' => \Dystcz\LunarApiStripeAdapter\Jobs\Webhooks\HandlePaymentIntentRequiresAction::class,
         // 'source_chargeable' => \Dystcz\LunarApiStripeAdapter\Jobs\Webhooks\HandleChargeableSource::class,

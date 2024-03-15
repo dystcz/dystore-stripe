@@ -81,7 +81,7 @@ it('can handle payment_intent.succeeded event', function () {
     // Event::assertDispatched(OrderPaymentSuccessful::class);
 })->group('webhooks');
 
-it('can handle payment_intent.cancelled event', function () {
+it('can handle payment_intent.canceled event', function () {
     /** @var TestCase $this */
     Event::fake();
     Queue::fake();
