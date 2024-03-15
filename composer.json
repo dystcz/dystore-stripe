@@ -3,11 +3,12 @@
     "description": "Lunar API Stripe Adapter",
     "keywords": [
         "dystcz",
+        "laravel",
+        "php",
         "lunar",
         "lunar-api",
         "lunar-api-stripe-adapter",
-        "laravel",
-        "php"
+        "stripe"
     ],
     "homepage": "https://github.com/dystcz/lunar-api-stripe-adapter",
     "license": "MIT",
@@ -26,9 +27,8 @@
         "spatie/laravel-stripe-webhooks": "^3.6"
     },
     "require-dev": {
-        "laravel/pint": "^1.0",
-        "nunomaduro/collision": "^7.8",
-        "nunomaduro/larastan": "^2.0.1",
+        "laravel/pint": "^1.7",
+        "nunomaduro/larastan": "^2.5.1",
         "orchestra/testbench": "^8.8",
         "pestphp/pest": "^2.0",
         "pestphp/pest-plugin-arch": "^2.0",
@@ -41,17 +41,17 @@
     },
     "autoload": {
         "psr-4": {
-            "Dystcz\\LunarApiStripeAdapter\\": "src/"
+            "Dystcz\\LunarApiStripeAdapter\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Dystcz\\LunarApiStripeAdapter\\Tests\\": "tests/"
+            "Dystcz\\LunarApiStripeAdapter\\Tests\\": "tests"
         }
     },
     "scripts": {
         "post-autoload-dump": "@composer run prepare",
-        "clear": "@php vendor/bin/testbench package:purge-lunar-api-stripe-adapter --ansi",
+        "clear": "@php vendor/bin/testbench package:purge --ansi",
         "prepare": "@php vendor/bin/testbench package:discover --ansi",
         "analyse": "vendor/bin/phpstan analyse",
         "test": "vendor/bin/pest",
