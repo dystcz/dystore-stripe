@@ -22,4 +22,11 @@ return [
     |
     */
     'type' => 'stripe',
+
+    /**
+     * Automatic payment methods
+     *
+     * Enable automatic payment methods.
+     */
+    'automatic_payment_methods' => true,
 ];
