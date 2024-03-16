@@ -2,6 +2,14 @@
 
 All notable changes to `lunar-api-stripe-adapter` will be documented in this file.
 
+## v0.8.5 - 2024-03-16
+
+### What's Changed
+
+* Fix automatic payment methods by @theimerj in https://github.com/dystcz/lunar-api-stripe-adapter/pull/11
+
+**Full Changelog**: https://github.com/dystcz/lunar-api-stripe-adapter/compare/0.8.4...0.8.5
+
 ## v0.8.4 - 2024-03-14
 
 ### What's Changed
