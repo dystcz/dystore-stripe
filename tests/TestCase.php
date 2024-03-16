@@ -123,6 +123,7 @@ abstract class TestCase extends Orchestra
                 'payment_intent' => env('STRIPE_WEBHOOK_SECRET'),
             ],
         ]);
+        Config::set('lunar-api.stripe.automatic_payment_methods', false);
 
         // Default payment driver
         Config::set('lunar.payments.default', 'stripe');
