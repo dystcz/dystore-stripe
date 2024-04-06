@@ -41,7 +41,7 @@ class StripeManager extends LunarStripeManager
 
         $intentData = array_merge(
             $intentData,
-            Config::get('lunar-api.stripe.automatic_payment_methods', false)
+            Config::get('lunar-api.stripe.automatic_payment_methods', true)
             ? ['automatic_payment_methods' => ['enabled' => true]]
             : ['payment_method_types' => Config::get('lunar-api.stripe.payment_method_types', ['card'])]
         );
