@@ -165,7 +165,7 @@ abstract class TestCase extends Orchestra
     /**
      * Set up the database.
      */
-    protected function setUpDatabase()
+    protected function setUpDatabase(): void
     {
         $migration = include __DIR__.'/../vendor/spatie/laravel-webhook-client/database/migrations/create_webhook_calls_table.php.stub';
 
