@@ -24,7 +24,7 @@ class LunarApiStripeAdapterServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->app->singleton(
-            'gc:stripe',
+            'lunar:stripe',
             fn (Application $app) => $app->make(StripeManager::class),
         );
 
