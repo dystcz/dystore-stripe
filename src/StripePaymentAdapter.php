@@ -9,7 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Lunar\Models\Cart;
-use Lunar\Stripe\Facades\StripeFacade;
+use Lunar\Stripe\Facades\Stripe;
 use Lunar\Stripe\Managers\StripeManager;
 use Spatie\StripeWebhooks\ProcessStripeWebhookJob;
 use Spatie\StripeWebhooks\StripeSignatureValidator;
@@ -34,7 +34,7 @@ class StripePaymentAdapter extends PaymentAdapter
             'process_webhook_job' => ProcessStripeWebhookJob::class,
         ]);
 
-        $this->stripeManager = StripeFacade::getFacadeRoot();
+        $this->stripeManager = Stripe::getFacadeRoot();
     }
 
     /**

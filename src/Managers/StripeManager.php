@@ -3,6 +3,7 @@
 namespace Dystcz\LunarApiStripeAdapter\Managers;
 
 use Illuminate\Support\Facades\Config;
+use Lunar\Models\CartAddress;
 use Lunar\Stripe\Managers\StripeManager as LunarStripeManager;
 use Stripe\PaymentIntent;
 
@@ -15,12 +16,8 @@ class StripeManager extends LunarStripeManager
 
     /**
      * Build the intent
-     *
-     * @param  int  $value
-     * @param  string  $currencyCode
-     * @param  \Lunar\Models\CartAddress  $shipping
      */
-    protected function buildIntent($value, $currencyCode, $shipping): PaymentIntent
+    protected function buildIntent(int $value, string $currencyCode, ?CartAddress $shipping, array $opts = []): PaymentIntent
     {
         $intentData = [
             'amount' => $value,
@@ -37,6 +34,7 @@ class StripeManager extends LunarStripeManager
                     'state' => $shipping->state,
                 ],
             ],
+            ...$opts,
         ];
 
         $intentData = array_merge(
