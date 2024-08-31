@@ -50,11 +50,7 @@ test('can create a payment intent', function (string $paymentMethod) {
 
     // Stores the payment intent in the cart
     expect($response->json('meta.payment_intent.id'))
-        ->toBe($this->cart->fresh()->meta['payment_intent']);
-
-    // Stores the payment intent in the order
-    expect($response->json('meta.payment_intent.id'))
-        ->toBe($this->order->fresh()->meta['payment_intent']);
+        ->toBe($this->cart->fresh()->paymentIntents->first()->intent_id);
 
 })->group('payment-intents')->with(['stripe']);
 
