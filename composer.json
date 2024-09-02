@@ -21,9 +21,9 @@
     ],
     "require": {
         "php": "^8.2",
-        "dystcz/lunar-api": "^1.0.0-alpha",
+        "dystcz/lunar-api": "^1.0.0-beta.1",
         "illuminate/support": "^11.0",
-        "lunarphp/stripe": "^1.0.0-alpha",
+        "lunarphp/stripe": "^1.0.0",
         "spatie/laravel-stripe-webhooks": "^3.6"
     },
     "require-dev": {
