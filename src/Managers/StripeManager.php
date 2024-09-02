@@ -3,7 +3,6 @@
 namespace Dystcz\LunarApiStripeAdapter\Managers;
 
 use Illuminate\Support\Facades\Config;
-use Lunar\Models\CartAddress;
 use Lunar\Stripe\Managers\StripeManager as LunarStripeManager;
 use Stripe\PaymentIntent;
 
@@ -17,33 +16,20 @@ class StripeManager extends LunarStripeManager
     /**
      * Build the intent
      */
-    protected function buildIntent(int $value, string $currencyCode, ?CartAddress $shipping, array $opts = []): PaymentIntent
+    protected function buildIntent(int $value, string $currencyCode, array $opts = []): PaymentIntent
     {
-        $intentData = [
+        $params = [
             'amount' => $value,
             'currency' => $currencyCode,
-            'capture_method' => Config::get('lunar.stripe.policy', 'automatic'),
-            'shipping' => [
-                'name' => "{$shipping->first_name} {$shipping->last_name}",
-                'address' => [
-                    'city' => $shipping->city,
-                    'country' => $shipping->country->iso2,
-                    'line1' => $shipping->line_one,
-                    'line2' => $shipping->line_two,
-                    'postal_code' => $shipping->postcode,
-                    'state' => $shipping->state,
-                ],
-            ],
-            ...$opts,
-        ];
-
-        $intentData = array_merge(
-            $intentData,
             Config::get('lunar-api.stripe.automatic_payment_methods', true)
             ? ['automatic_payment_methods' => ['enabled' => true]]
-            : ['payment_method_types' => Config::get('lunar-api.stripe.payment_method_types', ['card'])]
-        );
+            : ['payment_method_types' => Config::get('lunar-api.stripe.payment_method_types', ['card'])],
+            'capture_method' => config('lunar.stripe.policy', 'automatic'),
+        ];
 
-        return PaymentIntent::create($intentData);
+        return PaymentIntent::create([
+            ...$params,
+            ...$opts,
+        ]);
     }
 }

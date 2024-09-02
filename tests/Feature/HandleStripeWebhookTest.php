@@ -57,7 +57,8 @@ it('can handle payment_intent.succeeded event', function () {
 
     $data = json_decode(file_get_contents(__DIR__.'/../Stubs/Stripe/payment_intent.succeeded.json'), true);
 
-    $data['data']['object']['id'] = $this->cart->meta['payment_intent'];
+    $paymentIntentId = $this->cart->fresh()->paymentIntents->first()->intent_id;
+    $data['data']['object']['id'] = $paymentIntentId;
 
     PaymentIntent::update($this->intent->id, [
         // 'automatic_payment_methods' => false,
@@ -87,7 +88,7 @@ it('can handle payment_intent.canceled event', function () {
 
     $data = json_decode(file_get_contents(__DIR__.'/../Stubs/Stripe/payment_intent.canceled.json'), true);
 
-    $paymentIntentId = $this->cart->meta['payment_intent'];
+    $paymentIntentId = $this->cart->fresh()->paymentIntents->first()->intent_id;
     $data['data']['object']['id'] = $paymentIntentId;
 
     $response = $this
@@ -109,7 +110,8 @@ it('can handle payment_intent.failed event', function () {
 
     $data = json_decode(file_get_contents(__DIR__.'/../Stubs/Stripe/payment_intent.payment_failed.json'), true);
 
-    $data['data']['object']['id'] = $this->cart->meta['payment_intent'];
+    $paymentIntentId = $this->cart->fresh()->paymentIntents->first()->intent_id;
+    $data['data']['object']['id'] = $paymentIntentId;
 
     $response = $this
         ->post(
@@ -130,7 +132,8 @@ it('can handle any other event', function () {
 
     $data = json_decode(file_get_contents(__DIR__.'/../Stubs/Stripe/charge.succeeded.json'), true);
 
-    $data['data']['object']['id'] = $this->cart->meta['payment_intent'];
+    $paymentIntentId = $this->cart->fresh()->paymentIntents->first()->intent_id;
+    $data['data']['object']['id'] = $paymentIntentId;
 
     $response = $this
         ->post(

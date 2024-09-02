@@ -5,6 +5,7 @@ namespace Dystcz\LunarApiStripeAdapter\Tests;
 use Dystcz\LunarApiStripeAdapter\Tests\Stubs\Carts\Modifiers\TestShippingModifier;
 use Dystcz\LunarApiStripeAdapter\Tests\Stubs\Lunar\TestTaxDriver;
 use Dystcz\LunarApiStripeAdapter\Tests\Stubs\Lunar\TestUrlGenerator;
+use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables;
@@ -99,44 +100,47 @@ abstract class TestCase extends Orchestra
         $app->useEnvironmentPath(__DIR__.'/..');
         $app->bootstrapWith([LoadEnvironmentVariables::class]);
 
-        /**
-         * Lunar configuration
-         */
-        Config::set('lunar.urls.generator', TestUrlGenerator::class);
-        Config::set('lunar.taxes.driver', 'test');
+        tap($app['config'], function (Repository $config) {
+            /**
+             * Lunar configuration
+             */
+            $config->set('lunar.urls.generator', TestUrlGenerator::class);
+            $config->set('lunar.taxes.driver', 'test');
 
-        /**
-         * App configuration
-         */
-        Config::set('database.default', 'sqlite');
-        Config::set('database.migrations', 'migrations');
-        Config::set('database.connections.sqlite', [
-            'driver' => 'sqlite',
-            'database' => ':memory:',
-            'prefix' => '',
-        ]);
+            /**
+             * App configuration
+             */
+            $config->set('database.default', 'sqlite');
+            $config->set('database.migrations', 'migrations');
+            $config->set('database.connections.sqlite', [
+                'driver' => 'sqlite',
+                'database' => ':memory:',
+                'prefix' => '',
+            ]);
 
-        Config::set('services.stripe', [
-            'public_key' => env('STRIPE_PUBLIC_KEY'),
-            'key' => env('STRIPE_SECRET_KEY'),
-            'webhooks' => [
-                'payment_intent' => env('STRIPE_WEBHOOK_SECRET'),
-            ],
-        ]);
-        Config::set('lunar-api.stripe.automatic_payment_methods', false);
+            $config->set('services.stripe', [
+                'public_key' => env('STRIPE_PUBLIC_KEY'),
+                'key' => env('STRIPE_SECRET_KEY'),
+                'webhooks' => [
+                    'payment_intent' => env('STRIPE_WEBHOOK_SECRET'),
+                ],
+            ]);
+            $config->set('lunar-api.stripe.automatic_payment_methods', false);
 
-        // Default payment driver
-        Config::set('lunar.payments.default', 'stripe');
-        Config::set('lunar.payments.types', [
-            'stripe' => [
-                'driver' => 'stripe',
-                'authorized' => 'payment-received',
-            ],
-        ]);
+            // Default payment driver
+            $config->set('lunar.payments.default', 'stripe');
+            $config->set('lunar.payments.types', [
+                'stripe' => [
+                    'driver' => 'stripe',
+                    'authorized' => 'payment-received',
+                ],
+            ]);
 
-        // Stripe webhooks
-        Config::set('stripe-webhooks.verify_signature', false);
-        Config::set('stripe-webhooks.connection', false);
+            // Stripe webhooks
+            $config->set('stripe-webhooks.verify_signature', false);
+            $config->set('stripe-webhooks.connection', false);
+        });
+
     }
 
     /**
