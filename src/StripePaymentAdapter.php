@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Lunar\Models\Cart;
+use Lunar\Models\Contracts\Cart as CartContract;
 use Lunar\Stripe\Facades\Stripe;
 use Lunar\Stripe\Managers\StripeManager;
 use Spatie\StripeWebhooks\ProcessStripeWebhookJob;
@@ -62,7 +63,7 @@ class StripePaymentAdapter extends PaymentAdapter
     /**
      * Create payment intent.
      */
-    public function createIntent(Cart $cart, array $meta = [], ?int $amount = null): PaymentIntentContract
+    public function createIntent(CartContract $cart, array $meta = [], ?int $amount = null): PaymentIntentContract
     {
         $cart = $this->updateCartMeta($cart, $meta);
 
@@ -92,12 +93,13 @@ class StripePaymentAdapter extends PaymentAdapter
      *
      * @param  array<string,mixed>  $meta
      */
-    protected function updateCartMeta(Cart $cart, array $meta = []): Cart
+    protected function updateCartMeta(CartContract $cart, array $meta = []): Cart
     {
         if (empty($meta)) {
             return $cart;
         }
 
+        /** @var Cart $cart */
         $cart->update('meta', [
             ...$this->cart->meta,
             ...$meta,
