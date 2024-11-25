@@ -6,8 +6,8 @@ use Dystcz\LunarApi\Domain\Orders\Events\OrderPaymentSuccessful;
 use Dystcz\LunarApi\Domain\Payments\Contracts\PaymentIntent;
 use Lunar\Base\DataTransferObjects\PaymentAuthorize;
 use Lunar\Facades\Payments;
-use Lunar\Models\Cart;
-use Lunar\Models\Order;
+use Lunar\Models\Contracts\Cart;
+use Lunar\Models\Contracts\Order;
 
 class AuthorizeStripePayment
 {
