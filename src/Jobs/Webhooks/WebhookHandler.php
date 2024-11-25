@@ -16,7 +16,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
-use Lunar\Models\Order;
+use Lunar\Models\Contracts\Order;
 use Spatie\WebhookClient\Models\WebhookCall;
 use Stripe\Event;
 use Throwable;
@@ -82,7 +82,7 @@ abstract class WebhookHandler implements ShouldQueue
 
             return $order;
         } catch (Throwable $e) {
-            $this->fail($e);
+            // $this->fail($e);
         }
 
         try {
@@ -90,7 +90,7 @@ abstract class WebhookHandler implements ShouldQueue
 
             return $order;
         } catch (Throwable $e) {
-            $this->fail($e);
+            // $this->fail($e);
         }
 
         try {
@@ -98,7 +98,7 @@ abstract class WebhookHandler implements ShouldQueue
 
             return $order;
         } catch (Throwable $e) {
-            $this->fail($e);
+            // $this->fail($e);
         }
 
         $this->fail(new ModelNotFoundException('Order not found.'));
