@@ -82,7 +82,7 @@ abstract class WebhookHandler implements ShouldQueue
 
             return $order;
         } catch (Throwable $e) {
-            $this->fail($e);
+            // $this->fail($e);
         }
 
         try {
@@ -90,7 +90,7 @@ abstract class WebhookHandler implements ShouldQueue
 
             return $order;
         } catch (Throwable $e) {
-            $this->fail($e);
+            // $this->fail($e);
         }
 
         try {
@@ -98,7 +98,7 @@ abstract class WebhookHandler implements ShouldQueue
 
             return $order;
         } catch (Throwable $e) {
-            $this->fail($e);
+            // $this->fail($e);
         }
 
         $this->fail(new ModelNotFoundException('Order not found.'));
