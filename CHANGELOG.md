@@ -2,6 +2,15 @@
 
 All notable changes to `lunar-api-stripe-adapter` will be documented in this file.
 
+## 0.8.5 - 2024-12-10
+
+### What's Changed
+
+* Fix automatic payment methods by @repl6669 in https://github.com/dystcz/dystore-stripe/pull/11
+* Fix: Fail after all attempts to find order fail by @repl6669 in https://github.com/dystcz/dystore-stripe/pull/17
+
+**Full Changelog**: https://github.com/dystcz/dystore-stripe/compare/0.8.4...0.8.5
+
 ## v0.8.5 - 2024-03-16
 
 ### What's Changed
